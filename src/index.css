@@ -1,0 +1,448 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* Premium highly-optimized color and background shifts scoped during theme transition to prevent layout-thrashing and CPU lag */
+.theme-transitioning,
+.theme-transitioning body,
+.theme-transitioning html,
+.theme-transitioning #root,
+.theme-transitioning div,
+.theme-transitioning p,
+.theme-transitioning h1,
+.theme-transitioning h2,
+.theme-transitioning h3,
+.theme-transitioning h4,
+.theme-transitioning h5,
+.theme-transitioning h6,
+.theme-transitioning span,
+.theme-transitioning a,
+.theme-transitioning button,
+.theme-transitioning header,
+.theme-transitioning footer,
+.theme-transitioning section,
+.theme-transitioning nav,
+.theme-transitioning svg,
+.theme-transitioning label,
+.theme-transitioning input,
+.theme-transitioning textarea {
+  transition: background-color 650ms cubic-bezier(0.16, 1, 0.3, 1),
+              color 650ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 650ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 650ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+:root {
+  --accent: #ffffff;
+  --glass: rgba(255, 255, 255, 0.015);
+  --border: rgba(255, 255, 255, 0.05);
+}
+
+@theme {
+  --color-accent: #ffffff;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #161616;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 9px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a2a2a;
+}
+
+/* Custom selection */
+::selection {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.light ::selection {
+  background: rgba(217, 119, 6, 0.25) !important;
+  color: #0c0a09 !important;
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+  .border-glow {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+  }
+  .glass-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .glass-card:hover {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.05);
+  }
+  .tag {
+    font-size: 10px;
+    font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.03);
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: inline-block;
+  }
+  
+  /* Physical Film Grain Overlay Animation */
+  .noise-overlay {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    width: 200%;
+    height: 200%;
+    background: transparent url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="4" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E') repeat;
+    opacity: 0.015; /* Subtle and refined digital texture */
+    pointer-events: none;
+    z-index: 9999;
+    animation: grain 10s steps(10) infinite;
+  }
+}
+
+@keyframes grain {
+  0%, 100% { transform:translate(0, 0); }
+  10% { transform:translate(-5%, -10%); }
+  20% { transform:translate(-15%, 5%); }
+  30% { transform:translate(7%, -25%); }
+  40% { transform:translate(-5%, 25%); }
+  50% { transform:translate(-15%, 10%); }
+  60% { transform:translate(15%, 0%); }
+  75% { transform:translate(0%, 15%); }
+  90% { transform:translate(3%, 10%); }
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #000000;
+  color: #f4f4f5;
+  transition: background-color 650ms cubic-bezier(0.16, 1, 0.3, 1), color 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html.light {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+body {
+  background-color: #000000;
+  color: #f4f4f5;
+  transition: background-color 650ms cubic-bezier(0.16, 1, 0.3, 1), color 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* LIGHT MOOD CONFIGS & COMPREHENSIVE OVERRIDES */
+.light {
+  --accent: #0f172a;
+  --glass: rgba(255, 255, 255, 0.85);
+  --border: rgba(0, 0, 0, 0.07);
+}
+
+body.light {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* Base element backgrounds */
+.light .bg-black,
+.light .bg-\[\#000000\],
+.light .bg-\[\#111111\],
+.light .bg-\[\#030303\],
+.light .min-h-screen {
+  background-color: #f8fafc !important;
+}
+
+/* Cards & high-contrast containers */
+.light .bg-neutral-950,
+.light .bg-neutral-900,
+.light .bg-neutral-900\/60,
+.light .bg-neutral-900\/50,
+.light .bg-zinc-950,
+.light .bg-zinc-900,
+.light .bg-\[\#0d0d0d\],
+.light .bg-black\/95,
+.light .bg-black\/90,
+.light .bg-black\/85,
+.light .bg-black\/80,
+.light .bg-black\/60,
+.light .bg-black\/40 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light .bg-black\/60 {
+  background-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.light .bg-black\/90 {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+.light .bg-black\/80 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.light .glass-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+}
+
+.light .glass-card:hover {
+  border-color: rgba(245, 158, 11, 0.35) !important;
+  box-shadow: 0 4px 25px rgba(245, 158, 11, 0.08) !important;
+}
+
+/* Navigation Bar Styling */
+.light header#navbar-portal {
+  background-color: rgba(248, 250, 252, 0.85) !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light header#navbar-portal nav {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.light header#navbar-portal nav a {
+  color: #64748b !important;
+}
+
+.light header#navbar-portal nav a.bg-amber-500,
+.light header#navbar-portal nav a[class*="bg-amber-500"],
+.light div a[class*="bg-amber-500"],
+.light a[class*="bg-amber-500"],
+.light .bg-amber-500 {
+  color: #020617 !important;
+  font-weight: 800 !important;
+}
+
+.light header#navbar-portal nav a:hover:not([class*="bg-amber-500"]) {
+  color: #020617 !important;
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+.light .text-zinc-500,
+.light .text-zinc-455,
+.light .text-zinc-400 {
+  color: #57657a !important;
+}
+
+/* Mobile responsive navigation overrides */
+.light div[class*="md:hidden w-full bg-\[\#000000\]"] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Interactive hover backgrounds */
+.light .hover\:bg-white\/5:hover,
+.light .hover\:bg-white\/10:hover,
+.light .bg-white\/5,
+.light .bg-white\/10 {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+  color: #0f172a !important;
+}
+
+/* Global text contrast formatting */
+.light .text-white,
+.light .text-zinc-100 {
+  color: #0f172a !important;
+}
+
+.light .text-zinc-200,
+.light .text-zinc-300,
+.light .text-neutral-300,
+.light .text-zinc-300\/95,
+.light [class*="text-zinc-300/"],
+.light [class*="text-zinc-400/"] {
+  color: #334155 !important;
+}
+
+/* Accent contrast scaling for readability on light text */
+.light .text-amber-500,
+.light .text-amber-500\/90 {
+  color: #d97706 !important; /* Warmer amber for high light contrast */
+}
+
+/* Borders */
+.light .border-neutral-900,
+.light .border-zinc-800,
+.light .border-zinc-850,
+.light .border-white\/5,
+.light .border-white\/10,
+.light .border-white\/20,
+.light .border-white\/30 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Timeline grid backgrounds and active track color */
+.light .ambient-grid-bg {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px) !important;
+  opacity: 0.95 !important;
+}
+
+/* Interactive Timeline elements */
+.light .bg-neutral-900\/60 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+.light .border-neutral-900\/20 {
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}
+.light .bg-white\/30 {
+  background-color: #d97706 !important;
+}
+.light .bg-black.rounded-full {
+  background-color: #ffffff !important;
+}
+
+/* Custom interactive key selectors */
+.light .tag {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+  color: #0f172a !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.light .border-glow {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+}
+
+.light .bg-amber-500\/10 {
+  background-color: rgba(217, 119, 6, 0.08) !important;
+}
+.light .border-amber-500\/20 {
+  border-color: rgba(217, 119, 6, 0.15) !important;
+}
+
+/* Light Mode Footer and Contact Card styling */
+.light footer#footer-portal {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.01) !important;
+}
+
+.light .contact-form-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02) !important;
+}
+
+.light .contact-form-card label {
+  color: #475569 !important;
+}
+
+.light .contact-form-card input,
+.light .contact-form-card textarea {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+.light .contact-form-card input::placeholder,
+.light .contact-form-card textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.light .contact-form-card input:focus,
+.light .contact-form-card textarea:focus {
+  border-color: #d97706 !important;
+  box-shadow: 0 0 0 1px #d97706 !important;
+}
+
+.light .contact-form-card input:disabled,
+.light .contact-form-card textarea:disabled {
+  background-color: #f1f5f9 !important;
+  color: #64748b !important;
+}
+
+/* Light Mode Project Proof Card Overrides */
+.light .project-proof-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+}
+
+.light .project-proof-card:hover {
+  border-color: #d97706 !important;
+  box-shadow: 0 10px 35px rgba(217, 119, 6, 0.08) !important;
+}
+
+.light .project-proof-card .icon-holder {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light .project-proof-card:hover .icon-holder {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.light .project-proof-card .icon-holder svg {
+  color: #64748b !important;
+}
+
+.light .project-proof-card:hover .icon-holder svg {
+  color: #0f172a !important;
+}
+
+.light .project-proof-card .project-period {
+  color: #64748b !important;
+}
+
+.light .project-proof-card .project-title {
+  color: #0f172a !important;
+}
+
+.light .project-proof-card:hover .project-title {
+  color: #d97706 !important;
+}
+
+.light .project-proof-card .project-subtitle {
+  color: #64748b !important;
+}
+
+.light .project-proof-card:hover .project-subtitle {
+  color: #b45309 !important; /* Beautiful readable bronze-amber contrasting accent */
+}
+
+.light .project-proof-card .project-description {
+  color: #334155 !important;
+}
+
+.light .project-proof-card .project-tag {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+.light .project-proof-card .project-action-btn {
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+.light .project-proof-card:hover .project-action-btn {
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+
+

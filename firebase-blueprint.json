@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "Message": {
+      "title": "Message",
+      "description": "A contact message submitted via the transmission portal.",
+      "type": "object",
+      "properties": {
+        "inquirerName": {
+          "type": "string",
+          "description": "The name of the sender."
+        },
+        "inquirerEmail": {
+          "type": "string",
+          "format": "email",
+          "description": "The email address of the sender."
+        },
+        "messageSubject": {
+          "type": "string",
+          "description": "Subject of the message."
+        },
+        "messagePayload": {
+          "type": "string",
+          "description": "Body content/payload of the message."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the document was created."
+        },
+        "deviceSession": {
+          "type": "string",
+          "description": "Simulated hardware session Identifier."
+        }
+      },
+      "required": ["inquirerName", "inquirerEmail", "messagePayload", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Secure storage for all contact portal submissions."
+    }
+  }
+}

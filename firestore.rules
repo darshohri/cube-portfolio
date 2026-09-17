@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global safety net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global helpers
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Validation helper for Message Entity
+    function isValidMessage(data) {
+      return data.keys().hasAll(['inquirerName', 'inquirerEmail', 'messagePayload', 'createdAt'])
+        && data.keys().size() <= 6
+        && data.inquirerName is string
+        && data.inquirerName.size() > 0
+        && data.inquirerName.size() <= 256
+        && data.inquirerEmail is string
+        && data.inquirerEmail.size() > 0
+        && data.inquirerEmail.size() <= 256
+        && data.messagePayload is string
+        && data.messagePayload.size() > 0
+        && data.messagePayload.size() <= 10000
+        && (!('messageSubject' in data) || (data.messageSubject is string && data.messageSubject.size() <= 500))
+        && (!('deviceSession' in data) || (data.deviceSession is string && data.deviceSession.size() <= 256))
+        && data.createdAt == request.time;
+    }
+
+    // Message Collection rules
+    match /messages/{messageId} {
+      allow create: if isValidId(messageId) && isValidMessage(incoming());
+      allow read, update, delete: if false;
+    }
+  }
+}
