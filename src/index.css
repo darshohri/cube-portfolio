@@ -607,10 +607,10 @@ body.light {
 }
 @keyframes fadeInHtml {
   0% { opacity: 0; pointer-events: none; }
-  99% { opacity: 0; pointer-events: none; }
+  80% { opacity: 0; pointer-events: none; }
   100% { opacity: 1; pointer-events: auto; }
 }
 .html-fade-in {
   width: 100vw;
-  animation: fadeInHtml 4s forwards;
+  animation: fadeInHtml 5s ease-in forwards;
 }
