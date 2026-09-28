@@ -3,7 +3,7 @@ import { ScrollControls, Scroll, useScroll, Environment, Float, Edges, ContactSh
 import { useRef, useMemo, useState, useEffect } from 'react';
 import * as THREE from 'three';
 
-function LikeCounter() {
+function LikeCounter({ visible }: { visible: boolean }) {
   const [likes, setLikes] = useState<number | null>(null);
   const [isLiking, setIsLiking] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
@@ -72,8 +72,10 @@ function LikeCounter() {
         border: hasLiked ? '1px solid rgba(255, 255, 255, 0.5)' : '1px solid rgba(255, 255, 255, 0.2)',
         color: 'white',
         cursor: hasLiked ? 'default' : 'pointer',
-        transition: 'transform 0.2s, background 0.2s',
+        transition: 'opacity 1s ease-in-out, transform 0.2s, background 0.2s',
         boxShadow: hasLiked ? '0 0 15px rgba(255,255,255,0.2)' : '0 4px 12px rgba(0,0,0,0.5)',
+        opacity: visible ? 1 : 0,
+        pointerEvents: visible ? (hasLiked ? 'auto' : 'auto') : 'none',
       }}
       onClick={handleLike}
       onMouseEnter={(e) => {
@@ -242,9 +244,12 @@ export default function App() {
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
-      <div style={{ opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out', pointerEvents: introFinished ? 'auto' : 'none' }}>
-        <LikeCounter />
-      </div>
+      {/* Scroll Blocker Overlay: prevents desync by intercepting wheel/touch events before they hit ScrollControls during the 4-second intro */}
+      {!introFinished && (
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 99999, pointerEvents: 'auto' }} />
+      )}
+      
+      <LikeCounter visible={introFinished} />
       <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
         <color attach="background" args={['#000000']} />
         
