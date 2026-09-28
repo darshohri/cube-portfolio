@@ -175,7 +175,7 @@ function CyberCube() {
       if (!cubeData) return;
       
       const pushDirection = cubeData.basePos.clone().normalize();
-      cubeData.spinPhase += 0.015 * cubeData.randomRotationSpeed;
+      cubeData.spinPhase += 0.009 * cubeData.randomRotationSpeed;
       
       if (isIntro) {
         // Assemble from scattered positions
@@ -215,15 +215,15 @@ function CyberCube() {
             metalness={0.9} 
             roughness={0.2} 
             transparent 
-            opacity={0.8}
+            opacity={0.7}
             transmission={0.9}
             thickness={1.5}
-            envMapIntensity={3}
+            envMapIntensity={2.3}
           />
           <Edges 
             linewidth={2} 
             threshold={15} 
-            color="#ffffff" 
+            color="#d4d4d4" 
           />
         </mesh>
       ))}
