@@ -1,308 +1,271 @@
-import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { Mail, X, Menu, Download, ArrowUp, FileText } from 'lucide-react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { ScrollControls, Scroll, useScroll, Environment, Float, Edges, ContactShadows } from '@react-three/drei';
+import { useRef, useMemo } from 'react';
+import * as THREE from 'three';
 
-import { personalInfo, projectsList, Project } from './data';
-import { playSound } from './utils/audio';
+const GRID_SIZE = 4;
+const SPACING = 0.6;
+const CUBE_SIZE = 0.55;
 
-// Custom components & Hooks
-import ScrollWire from './components/ScrollWire';
-import PullCord from './components/PullCord';
-import IntroAnimation from './components/IntroAnimation';
-import ResumeViewer from './components/ResumeViewer';
-
-import { useTheme } from './hooks/useTheme';
-import { useScrollSpy } from './hooks/useScrollSpy';
-import { useTypingCarousel } from './hooks/useTypingCarousel';
-
-// Extracted sections
-import Hero from './components/sections/Hero';
-import About from './components/sections/About';
-import Skills from './components/sections/Skills';
-import Projects from './components/sections/Projects';
-import Experience from './components/sections/Experience';
-import Achievements from './components/sections/Achievements';
-import Contact from './components/sections/Contact';
-import Footer from './components/sections/Footer';
-import ProjectDetailsModal from './components/sections/ProjectDetailsModal';
-
-const sectionRevealVariants = {
-  hidden: { 
-    opacity: 0, 
-    y: 35 
-  },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.21, 1.02, 0.43, 1.01],
+function CyberCube() {
+  const groupRef = useRef<THREE.Group>(null);
+  const scroll = useScroll();
+  
+  // Pre-calculate positions
+  const cubes = useMemo(() => {
+    const temp = [];
+    const offset = (GRID_SIZE - 1) / 2;
+    for (let x = 0; x < GRID_SIZE; x++) {
+      for (let y = 0; y < GRID_SIZE; y++) {
+        for (let z = 0; z < GRID_SIZE; z++) {
+          temp.push({
+            basePos: new THREE.Vector3((x - offset) * SPACING, (y - offset) * SPACING, (z - offset) * SPACING),
+            randomAxis: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize(),
+            randomRotationSpeed: Math.random() * 2 + 1,
+            randomScale: Math.random() * 0.5 + 0.5,
+            spinPhase: Math.random() * Math.PI * 2, // Initialize with random phase
+          });
+        }
+      }
     }
-  }
-};
+    return temp;
+  }, []);
 
-export default function App() {
-  const [showIntro, setShowIntro] = useState(true);
-  const [isWebsiteLoaded, setIsWebsiteLoaded] = useState(false);
+  // Pre-allocate quaternions to avoid garbage collection overhead in useFrame
+  const identityQuat = useMemo(() => new THREE.Quaternion(), []);
+  const spinningQuat = useMemo(() => new THREE.Quaternion(), []);
 
-  // Hook integrations
-  const { theme, toggleTheme } = useTheme(showIntro);
-  const { activeSection, isNavScrolled, showScrollTop } = useScrollSpy();
-  const { typingText } = useTypingCarousel(showIntro, isWebsiteLoaded);
-
-  // Custom Modals
-  const [isResumeOpen, setIsResumeOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-
-  // Filter and mobile navigation state
-  const [activeProjCat, setActiveProjCat] = useState<'all' | 'aiml' | 'web'>('all');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Project categorizer filter
-  const filteredProjects = activeProjCat === 'all'
-    ? projectsList
-    : projectsList.filter(p => p.category === activeProjCat);
-
-  // Parallax scroll velocity effects
-  const { scrollY } = useScroll();
-  const gridY = useTransform(scrollY, [0, 4000], [0, 350]);
+  useFrame((state) => {
+    if (!groupRef.current || !scroll) return;
+    
+    // offset goes from 0 to 1 as user scrolls down
+    const offset = scroll.offset;
+    
+    // 1. Group Rotation
+    // Spin the whole formation smoothly based on scroll, with a constant idle spin
+    groupRef.current.rotation.y = offset * Math.PI * 2 + state.clock.elapsedTime * 0.1;
+    groupRef.current.rotation.x = offset * Math.PI + Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
+    
+    // 2. Fragment & Explode
+    // Ease the explosion curve so it starts slow then accelerates
+    const explosionFactor = Math.pow(offset, 1.5) * 15;
+    
+    groupRef.current.children.forEach((child, i) => {
+      const cubeData = cubes[i];
+      if (!cubeData) return;
+      
+      // Calculate target position: base position pushed outward from center
+      const pushDirection = cubeData.basePos.clone().normalize();
+      
+      // Update spin phase continuously
+      cubeData.spinPhase += 0.015 * cubeData.randomRotationSpeed;
+      
+      // Determine how much the cube should be freely spinning based on scroll
+      // slerpFactor goes from 0 (grid aligned) at offset 0.25 to 1 (freely spinning) at offset 0.35
+      const slerpFactor = Math.min(Math.max((offset - 0.25) / 0.1, 0), 1);
+      
+      spinningQuat.setFromAxisAngle(cubeData.randomAxis, cubeData.spinPhase);
+      child.quaternion.slerpQuaternions(identityQuat, spinningQuat, slerpFactor);
+      
+      // Different phases of explosion for position
+      if (offset < 0.3) {
+        // Phase 1: Tight cube, minimal separation
+        const localExplosion = offset * 2; // 0 to 0.6
+        child.position.copy(cubeData.basePos).add(pushDirection.multiplyScalar(localExplosion));
+      } else {
+        // Phase 2: Fragmentation into data nodes
+        const fragmentProgress = (offset - 0.3) / 0.7; // 0 to 1
+        
+        // Push outward
+        const currentExplosion = 0.6 + fragmentProgress * explosionFactor;
+        
+        // Add some noise/floating to positions
+        const noiseX = Math.sin(state.clock.elapsedTime * cubeData.randomRotationSpeed) * fragmentProgress;
+        const noiseY = Math.cos(state.clock.elapsedTime * cubeData.randomRotationSpeed * 1.2) * fragmentProgress;
+        
+        child.position.copy(cubeData.basePos)
+          .add(pushDirection.multiplyScalar(currentExplosion))
+          .add(new THREE.Vector3(noiseX, noiseY, 0));
+      }
+    });
+  });
 
   return (
-    <>
-      <AnimatePresence mode="wait">
-        {showIntro ? (
-          <IntroAnimation key="intro" onComplete={() => setShowIntro(false)} />
-        ) : (
-          <motion.div
-            key="main-web"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            onAnimationComplete={() => setIsWebsiteLoaded(true)}
-            className={`min-h-screen ${theme === 'light' ? 'light text-slate-900 bg-slate-50' : 'bg-[#000000] text-zinc-100'} font-sans tracking-tight antialiased relative overflow-x-hidden transition-colors duration-500`}
-          >
-            {/* High-contrast physical digital film grain overlay */}
-            <div className="noise-overlay" />
-            
-            {/* Dynamic ambient grid background styling with slow transform parallax */}
-            <motion.div 
-              style={{ y: gridY }}
-              className="fixed inset-0 ambient-grid-bg bg-[size:6rem_6rem] pointer-events-none z-0"
-            />
+    <group ref={groupRef}>
+      {cubes.map((cube, i) => (
+        <mesh key={i}>
+          <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
+          <meshPhysicalMaterial 
+            color="#444444" 
+            metalness={0.9} 
+            roughness={0.2} 
+            transparent 
+            opacity={0.8}
+            transmission={0.9}
+            thickness={1.5}
+            envMapIntensity={3}
+          />
+          <Edges 
+            linewidth={2} 
+            threshold={15} 
+            color="#ffffff" 
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
 
-            {/* Kinetic scroll timeline wire */}
-            <ScrollWire activeSection={activeSection} />
+export default function App() {
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
+      <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
+        <color attach="background" args={['#000000']} />
+        
+        <ambientLight intensity={0.4} />
+        <directionalLight position={[10, 10, 10]} intensity={2} color="#ffffff" />
+        <pointLight position={[-10, -10, -10]} intensity={5} color="#ffffff" />
+        <spotLight position={[0, 10, 0]} intensity={2} color="#888888" penumbra={1} />
+        
+        <Environment preset="city" />
+        
+        <ScrollControls pages={7} damping={0.15}>
+          <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
+            <CyberCube />
+          </Float>
+          
+          <ContactShadows position={[0, -3.5, 0]} opacity={0.4} scale={20} blur={2} far={10} color="#ffffff" />
 
-            {/* Modern responsive glassmorphic sticky navbar */}
-            <header 
-              id="navbar-portal"
-              className={`fixed top-0 left-0 w-full z-[100] transition-all duration-300 ${
-                isNavScrolled 
-                  ? 'bg-[#000000]/95 backdrop-blur-md border-b border-neutral-900 shadow-2xl py-3' 
-                  : 'bg-transparent py-5'
-              }`}
-            >
-              <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between relative">
-                {/* Brand spacer */}
-                <div className="w-10 h-9 hidden md:block" />
+          <Scroll html style={{ width: '100vw' }}>
+            {/* 1. HERO SECTION */}
+            <div style={{ position: 'absolute', top: '35vh', left: '10vw', color: 'white', maxWidth: '50vw' }}>
+              <h1 style={{ fontSize: '5rem', fontWeight: '800', lineHeight: 1, letterSpacing: '-0.02em', marginBottom: '1rem' }}>
+                Darsh<br/><span style={{ color: '#ffffff' }}>Ohri</span>
+              </h1>
+              <p style={{ fontSize: '1.5rem', color: '#94a3b8', fontWeight: 300, marginBottom: '0.5rem' }}>
+                Full-Stack & AI Software Developer
+              </p>
+              <p style={{ fontSize: '1.1rem', color: '#64748b', fontWeight: 300 }}>
+                B.Tech CSE (Data Science) @ NMIMS Chandigarh
+              </p>
+            </div>
 
-                {/* Desktop navigation channels */}
-                <nav className="hidden md:flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/5 backdrop-blur-sm">
-                  {['home', 'about', 'skills', 'projects', 'experience', 'achievements', 'contact'].map((sect) => (
-                    <a
-                      key={sect}
-                      href={`#${sect}`}
-                      onClick={() => playSound.playClick()}
-                      className={`px-4 py-1.5 rounded-full text-xs font-mono font-medium tracking-wide uppercase transition-all duration-200 ${
-                        activeSection === sect 
-                          ? 'bg-amber-500 text-black font-extrabold shadow-md shadow-amber-500/20' 
-                          : 'text-zinc-500 hover:text-white hover:bg-white/5'
-                      }`}
-                    >
-                      {sect === 'achievements' ? 'certifications' : sect}
-                    </a>
-                  ))}
-                </nav>
+            {/* 2. SKILLS SECTION */}
+            <div style={{ position: 'absolute', top: '130vh', right: '10vw', color: 'white', maxWidth: '45vw', textAlign: 'right' }}>
+              <h2 style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>Full-Stack <br/>& AI Integration.</h2>
+              <p style={{ fontSize: '1.2rem', color: '#cbd5e1', lineHeight: 1.6 }}>
+                Bridging the gap between complex data and intuitive user experiences.
+                Specialized in LLM integrations (Gemini, Groq) and modern web architectures.
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.8rem', marginTop: '2rem', flexWrap: 'wrap' }}>
+                {['React', 'Next.js', 'TypeScript', 'FastAPI', 'Python', 'Tailwind CSS', 'Three.js', 'Firebase', 'PostgreSQL', 'Gemini API'].map(skill => (
+                  <span key={skill} style={{ padding: '0.5rem 1.5rem', background: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255, 255, 255, 0.3)', borderRadius: '2rem', fontSize: '0.9rem' }}>
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
 
-                {/* Header CTA Action handles */}
-                <div className="hidden md:flex items-center gap-3 relative mr-12 pr-4">
-                  <button
-                    onClick={() => {
-                      setIsResumeOpen(true);
-                      playSound.playOpen();
-                    }}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border transition-all text-xs font-mono font-bold cursor-pointer hover:scale-[1.03] ${
-                      theme === 'light'
-                        ? 'bg-slate-900/10 hover:bg-slate-900/15 border-slate-900/20 text-slate-800'
-                        : 'bg-white/5 hover:bg-white/10 border-white/10 text-white hover:border-white'
-                    }`}
-                  >
-                    <FileText className="h-3.5 w-3.5" />
-                    <span>Interactive CV</span>
-                  </button>
-                  
-                  <a
-                    href="mailto:darshohri@gmail.com"
-                    onClick={() => playSound.playClick()}
-                    className={`p-2 rounded-xl border transition-all hover:scale-[1.04] inline-flex items-center justify-center cursor-pointer shadow-md ${
-                      theme === 'light'
-                        ? 'bg-slate-900/10 hover:bg-slate-900/15 border-slate-900/20 text-slate-800 shadow-slate-900/5'
-                        : 'bg-white/5 hover:bg-white/10 border-white/10 text-white hover:border-white shadow-white/5'
-                    }`}
-                    title="Message Darsh directly"
-                  >
-                    <Mail className="h-4 w-4" />
-                  </a>
+            {/* 3. EXPERIENCE SECTION */}
+            <div style={{ position: 'absolute', top: '230vh', left: '10vw', color: 'white', maxWidth: '45vw' }}>
+              <h2 style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>Professional<br/>Experience.</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: '2rem' }}>
+                <div style={{ paddingLeft: '1.5rem', borderLeft: '2px solid #ffffff' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: '600' }}>LaunchED Global</h3>
+                  <p style={{ color: '#ffffff', fontSize: '1rem', marginBottom: '0.5rem' }}>Web Development Intern | May - Jul 2026</p>
+                  <p style={{ color: '#94a3b8', lineHeight: 1.5 }}>Architected responsive, mobile-first web pages, reducing cross-device rendering inconsistencies by 25%. Refactored legacy components into modular UI patterns following clean-code practices.</p>
                 </div>
-
-                {/* Dedicated layout-aligned slot for Pull Cord to resolve overlap */}
-                <div className="hidden md:block absolute right-1 md:right-2 top-1/2 -translate-y-1/2 w-16 h-10 select-none pointer-events-auto">
-                  <PullCord theme={theme} toggleTheme={toggleTheme} />
-                </div>
-
-                {/* Mobile hamburger menu toggle */}
-                <div className="md:hidden flex items-center gap-2 relative mr-12">
-                  <button
-                    onClick={() => {
-                      setIsMobileMenuOpen(!isMobileMenuOpen);
-                      playSound.playClick();
-                    }}
-                    className="p-2 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-white cursor-pointer"
-                  >
-                    {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-4" />}
-                  </button>
-                </div>
-
-                {/* Mobile-aligned slot for Pull Cord to resolve mobile overlap */}
-                <div className="md:hidden absolute right-1 top-1/2 -translate-y-1/2 w-12 h-10 select-none pointer-events-auto">
-                  <PullCord theme={theme} toggleTheme={toggleTheme} />
+                <div style={{ paddingLeft: '1.5rem', borderLeft: '2px solid rgba(255,255,255,0.2)' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: '600' }}>MAG Insights</h3>
+                  <p style={{ color: '#94a3b8', fontSize: '1rem', marginBottom: '0.5rem' }}>Social Media & Marketing Intern | Jan - Mar 2026</p>
+                  <p style={{ color: '#94a3b8', lineHeight: 1.5 }}>Directed short-form video commercials, accelerating content pipeline throughput by 40% and increasing organic audience engagement by 35%.</p>
                 </div>
               </div>
+            </div>
 
-              {/* Mobile menu sheet overlay block */}
-              <AnimatePresence>
-                {isMobileMenuOpen && (
-                  <motion.div 
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="md:hidden w-full bg-[#000000]/95 border-b border-neutral-900 px-4 py-6 text-left absolute left-0 top-full overflow-hidden shadow-2xl backdrop-blur-xl"
-                  >
-                    <div className="flex flex-col gap-3">
-                      {['home', 'about', 'skills', 'projects', 'experience', 'achievements', 'contact'].map((sect) => (
-                        <a
-                          key={sect}
-                          href={`#${sect}`}
-                          onClick={() => {
-                            setIsMobileMenuOpen(false);
-                            playSound.playClick();
-                          }}
-                          className={`px-4 py-2.5 rounded-xl text-sm font-mono uppercase tracking-wider block border transition-all ${
-                            activeSection === sect 
-                              ? 'bg-amber-500 border-amber-500 text-black font-extrabold shadow-lg shadow-amber-500/20' 
-                              : 'bg-white/5 border-white/10 text-zinc-400 hover:text-white'
-                          }`}
-                        >
-                          {sect === 'achievements' ? 'certifications' : sect}
-                        </a>
-                      ))}
-                      
-                      <div className="grid grid-cols-2 gap-3 mt-4 border-t border-white/5 pt-4">
-                        <button
-                          onClick={() => {
-                            setIsMobileMenuOpen(false);
-                            setIsResumeOpen(true);
-                          }}
-                          className={`flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl border text-xs font-mono font-bold shadow-md transition-all cursor-pointer ${
-                            theme === 'light'
-                              ? 'bg-slate-900/10 border-slate-900/15 text-slate-800 shadow-slate-900/5'
-                              : 'bg-white/5 border-white/10 text-white shadow-white/5'
-                          }`}
-                        >
-                          <Download className="h-4 w-4" />
-                          <span>Download CV</span>
-                        </button>
-                        <a
-                          href="mailto:darshohri@gmail.com"
-                          className={`flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl border text-xs font-mono font-bold shadow-md transition-all cursor-pointer ${
-                            theme === 'light'
-                              ? 'bg-slate-900/10 border-slate-900/15 text-slate-800 shadow-slate-900/15'
-                              : 'bg-white/5 border-white/10 text-white hover:border-white shadow-white/5'
-                          }`}
-                        >
-                          <Mail className="h-4 w-4" />
-                          <span>Email Me</span>
-                        </a>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </header>
+            {/* 4. PROJECTS SECTION 1 */}
+            <div style={{ position: 'absolute', top: '330vh', right: '10vw', color: 'white', maxWidth: '45vw', textAlign: 'right' }}>
+              <h2 style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>Selected<br/>Projects.</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem' }}>
+                <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid #ffffff', borderRadius: '1rem 0 0 1rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                    <a href="https://getfinwise.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
+                      FinWise AI ↗
+                    </a>
+                  </h3>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>AI-powered personal-finance platform with scam detection, goal tracking, and market simulations using Gemini and Groq LLMs.</p>
+                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • FastAPI • Firebase • Gemini • Tailwind</p>
+                </div>
+                <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid rgba(255, 255, 255, 0.4)', borderRadius: '1rem 0 0 1rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                    <a href="https://zir0.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
+                      Ziro ↗
+                    </a>
+                  </h3>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>Intelligent blockchain payment layer reducing transaction friction by 30% with zero-gas L2 micro-remittances and AI scam detection.</p>
+                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • TypeScript • FastAPI • Polygon Amoy</p>
+                </div>
+              </div>
+            </div>
 
-            {/* Main Container Core */}
-            <main className="relative z-10 pt-24 px-4 md:px-8 max-w-7xl mx-auto flex flex-col gap-24 md:gap-32 pb-24">
+            {/* 5. PROJECTS SECTION 2 */}
+            <div style={{ position: 'absolute', top: '430vh', left: '10vw', color: 'white', maxWidth: '45vw' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem' }}>
+                <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid #ffffff', borderRadius: '0 1rem 1rem 0' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                    <a href="https://uselumiere.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
+                      Lumiere ↗
+                    </a>
+                  </h3>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>Healthcare system cutting patient-record audit time by 18s/record via FastAPI-backed identity resolution and visual diffs.</p>
+                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • PostgreSQL • FastAPI</p>
+                </div>
+                <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid rgba(255, 255, 255, 0.4)', borderRadius: '0 1rem 1rem 0' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                    <a href="https://byok-ai.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
+                      BYOK (Bring Your Own Key) ↗
+                    </a>
+                  </h3>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>Offline-first AI chat interface with 100% on-device data privacy via IndexedDB and the official @google/genai SDK.</p>
+                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>React • TypeScript • IndexedDB • API</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 6. ACHIEVEMENTS SECTION */}
+            <div style={{ position: 'absolute', top: '530vh', right: '10vw', color: 'white', maxWidth: '45vw', textAlign: 'right' }}>
+              <h2 style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>Awards &<br/>Recognitions.</h2>
+              <ul style={{ listStyleType: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem', color: '#cbd5e1', fontSize: '1.1rem' }}>
+                <li><strong style={{ color: 'white' }}>1st Place</strong> — Plaksha Prayas Tech Hackathon (Future Finance)</li>
+                <li><strong style={{ color: 'white' }}>Winner</strong> — ACM-SIH Ideathon</li>
+                <li><strong style={{ color: 'white' }}>1st Place</strong> — Byte Battle, Code2Career Club</li>
+                <li><strong style={{ color: 'white' }}>Top 6</strong> — StoxraHack 2026</li>
+                <li><strong style={{ color: 'white' }}>Top 67 Nationwide</strong> — Confluence 2.0 Hackathon</li>
+              </ul>
+            </div>
+
+            {/* 7. CONTACT SECTION */}
+            <div style={{ position: 'absolute', top: '630vh', left: '0', width: '100vw', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+              <h2 style={{ fontSize: '4rem', fontWeight: '800', marginBottom: '1rem' }}>Let's Connect.</h2>
+              <p style={{ fontSize: '1.2rem', color: '#94a3b8', marginBottom: '2rem' }}>Ready to build something extraordinary?</p>
               
-              <Hero 
-                theme={theme} 
-                typingText={typingText} 
-                setIsResumeOpen={setIsResumeOpen} 
-              />
-              
-              <About sectionRevealVariants={sectionRevealVariants} />
-              
-              <Skills sectionRevealVariants={sectionRevealVariants} />
-              
-              <Projects 
-                sectionRevealVariants={sectionRevealVariants}
-                activeProjCat={activeProjCat}
-                setActiveProjCat={setActiveProjCat}
-                filteredProjects={filteredProjects}
-                setSelectedProject={setSelectedProject}
-              />
-              
-              <Experience sectionRevealVariants={sectionRevealVariants} />
-              
-              <Achievements 
-                sectionRevealVariants={sectionRevealVariants} 
-                theme={theme} 
-              />
-              
-              <Contact sectionRevealVariants={sectionRevealVariants} />
+              <div style={{ display: 'flex', gap: '2rem', marginBottom: '3rem' }}>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=darshohri@gmail.com" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff', textDecoration: 'none', fontSize: '1.1rem' }}>darshohri@gmail.com</a>
+                <span style={{ color: '#475569' }}>|</span>
+                <a href="https://www.linkedin.com/in/darsh-ohri" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff', textDecoration: 'none', fontSize: '1.1rem' }}>LinkedIn</a>
+                <span style={{ color: '#475569' }}>|</span>
+                <a href="https://github.com/darshohri" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff', textDecoration: 'none', fontSize: '1.1rem' }}>GitHub</a>
+                <span style={{ color: '#475569' }}>|</span>
+                <a href="https://leetcode.com/u/darshohri" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff', textDecoration: 'none', fontSize: '1.1rem' }}>LeetCode</a>
+              </div>
 
-            </main>
-
-            <Footer />
-
-            <ProjectDetailsModal 
-              project={selectedProject} 
-              onClose={() => setSelectedProject(null)} 
-              theme={theme} 
-            />
-
-            {/* Floating Go to Top Button */}
-            <AnimatePresence>
-              {showScrollTop && (
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                  transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 h-10 w-10 md:h-12 md:w-12 rounded-full bg-black/85 border border-amber-500/25 hover:border-amber-500 text-amber-500 hover:text-white flex items-center justify-center shadow-[0_4px_20px_rgba(245,158,11,0.15)] hover:shadow-[0_4px_25px_rgba(245,158,11,0.35)] backdrop-blur-md cursor-pointer transition-all hover:scale-110 active:scale-95"
-                  aria-label="Go to top"
-                >
-                  <ArrowUp className="h-5 w-5 animate-pulse" />
-                </motion.button>
-              )}
-            </AnimatePresence>
-
-            {/* Resume viewer modal sheet */}
-            <ResumeViewer isOpen={isResumeOpen} onClose={() => setIsResumeOpen(false)} theme={theme} />
-
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+              <a href="/Darsh_Ohri_Resume.pdf" download="Darsh_Ohri_Resume.pdf" style={{ display: 'inline-block', padding: '1rem 3rem', fontSize: '1.1rem', fontWeight: '600', background: 'white', color: '#000000', textDecoration: 'none', borderRadius: '3rem', cursor: 'pointer', transition: 'transform 0.2s' }}>
+                Download Resume
+              </a>
+            </div>
+          </Scroll>
+        </ScrollControls>
+      </Canvas>
+    </div>
   );
 }

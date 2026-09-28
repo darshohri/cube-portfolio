@@ -6,6 +6,14 @@ import {defineConfig} from 'vite';
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
+    optimizeDeps: {
+      include: [
+        'three', 
+        '@react-three/fiber', 
+        '@react-three/drei',
+        'use-sync-external-store/shim/with-selector.js'
+      ]
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
