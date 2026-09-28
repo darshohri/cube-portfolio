@@ -111,12 +111,18 @@ function CyberCube() {
     for (let x = 0; x < GRID_SIZE; x++) {
       for (let y = 0; y < GRID_SIZE; y++) {
         for (let z = 0; z < GRID_SIZE; z++) {
+          const basePos = new THREE.Vector3((x - offset) * SPACING, (y - offset) * SPACING, (z - offset) * SPACING);
+          // Start position: completely scattered in a sphere
+          const startDirection = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+          const startPos = startDirection.multiplyScalar(Math.random() * 15 + 5); 
+          
           temp.push({
-            basePos: new THREE.Vector3((x - offset) * SPACING, (y - offset) * SPACING, (z - offset) * SPACING),
+            basePos,
+            startPos,
             randomAxis: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize(),
             randomRotationSpeed: Math.random() * 2 + 1,
             randomScale: Math.random() * 0.5 + 0.5,
-            spinPhase: Math.random() * Math.PI * 2, // Initialize with random phase
+            spinPhase: Math.random() * Math.PI * 2,
           });
         }
       }
@@ -131,54 +137,57 @@ function CyberCube() {
   useFrame((state) => {
     if (!groupRef.current || !scroll) return;
     
+    // Intro animation progress (0 to 1 over 2.5 seconds)
+    const rawProgress = state.clock.elapsedTime / 2.5;
+    const isIntro = rawProgress < 1;
+    const easedProgress = 1 - Math.pow(1 - Math.min(rawProgress, 1), 3); // Cubic ease out
+    
     // offset goes from 0 to 1 as user scrolls down
     const offset = scroll.offset;
     
     // 1. Group Rotation
-    // Spin the whole formation smoothly based on scroll, with a constant idle spin
-    groupRef.current.rotation.y = offset * Math.PI * 2 + state.clock.elapsedTime * 0.1;
-    groupRef.current.rotation.x = offset * Math.PI + Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
+    groupRef.current.rotation.y = isIntro 
+      ? state.clock.elapsedTime * 0.5 // Spin slightly faster during intro
+      : offset * Math.PI * 2 + state.clock.elapsedTime * 0.1;
+      
+    groupRef.current.rotation.x = isIntro
+      ? state.clock.elapsedTime * 0.2
+      : offset * Math.PI + Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
     
     // 2. Fragment & Explode
-    // Ease the explosion curve so it starts slow then accelerates
     const explosionFactor = Math.pow(offset, 1.5) * 15;
     
     groupRef.current.children.forEach((child, i) => {
       const cubeData = cubes[i];
       if (!cubeData) return;
       
-      // Calculate target position: base position pushed outward from center
       const pushDirection = cubeData.basePos.clone().normalize();
-      
-      // Update spin phase continuously
       cubeData.spinPhase += 0.015 * cubeData.randomRotationSpeed;
       
-      // Determine how much the cube should be freely spinning based on scroll
-      // slerpFactor goes from 0 (grid aligned) at offset 0.25 to 1 (freely spinning) at offset 0.35
-      const slerpFactor = Math.min(Math.max((offset - 0.25) / 0.1, 0), 1);
-      
-      spinningQuat.setFromAxisAngle(cubeData.randomAxis, cubeData.spinPhase);
-      child.quaternion.slerpQuaternions(identityQuat, spinningQuat, slerpFactor);
-      
-      // Different phases of explosion for position
-      if (offset < 0.3) {
-        // Phase 1: Tight cube, minimal separation
-        const localExplosion = offset * 2; // 0 to 0.6
-        child.position.copy(cubeData.basePos).add(pushDirection.multiplyScalar(localExplosion));
+      if (isIntro) {
+        // Assemble from scattered positions
+        child.position.lerpVectors(cubeData.startPos, cubeData.basePos, easedProgress);
+        
+        // Randomly spin while assembling, then settle to identity quaternion
+        spinningQuat.setFromAxisAngle(cubeData.randomAxis, cubeData.spinPhase * (1 - easedProgress) * 5);
+        child.quaternion.slerpQuaternions(spinningQuat, identityQuat, easedProgress);
       } else {
-        // Phase 2: Fragmentation into data nodes
-        const fragmentProgress = (offset - 0.3) / 0.7; // 0 to 1
+        const slerpFactor = Math.min(Math.max((offset - 0.25) / 0.1, 0), 1);
+        spinningQuat.setFromAxisAngle(cubeData.randomAxis, cubeData.spinPhase);
+        child.quaternion.slerpQuaternions(identityQuat, spinningQuat, slerpFactor);
         
-        // Push outward
-        const currentExplosion = 0.6 + fragmentProgress * explosionFactor;
-        
-        // Add some noise/floating to positions
-        const noiseX = Math.sin(state.clock.elapsedTime * cubeData.randomRotationSpeed) * fragmentProgress;
-        const noiseY = Math.cos(state.clock.elapsedTime * cubeData.randomRotationSpeed * 1.2) * fragmentProgress;
-        
-        child.position.copy(cubeData.basePos)
-          .add(pushDirection.multiplyScalar(currentExplosion))
-          .add(new THREE.Vector3(noiseX, noiseY, 0));
+        if (offset < 0.3) {
+          const localExplosion = offset * 2;
+          child.position.copy(cubeData.basePos).add(pushDirection.multiplyScalar(localExplosion));
+        } else {
+          const fragmentProgress = (offset - 0.3) / 0.7;
+          const currentExplosion = 0.6 + fragmentProgress * explosionFactor;
+          const noiseX = Math.sin(state.clock.elapsedTime * cubeData.randomRotationSpeed) * fragmentProgress;
+          const noiseY = Math.cos(state.clock.elapsedTime * cubeData.randomRotationSpeed * 1.2) * fragmentProgress;
+          child.position.copy(cubeData.basePos)
+            .add(pushDirection.multiplyScalar(currentExplosion))
+            .add(new THREE.Vector3(noiseX, noiseY, 0));
+        }
       }
     });
   });
@@ -211,17 +220,28 @@ function CyberCube() {
 
 export default function App() {
   const [isMobile, setIsMobile] = useState(false);
+  const [introFinished, setIntroFinished] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    
+    const timer = setTimeout(() => {
+      setIntroFinished(true);
+    }, 2500);
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
-      <LikeCounter />
+      <div style={{ opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out', pointerEvents: introFinished ? 'auto' : 'none' }}>
+        <LikeCounter />
+      </div>
       <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
         <color attach="background" args={['#000000']} />
         
@@ -242,7 +262,8 @@ export default function App() {
           <ContactShadows position={[0, -3.5, 0]} opacity={0.4} scale={20} blur={2} far={10} color="#ffffff" />
 
           <Scroll html style={{ width: '100vw' }}>
-            {/* 1. HERO SECTION */}
+            <div style={{ opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out', pointerEvents: introFinished ? 'auto' : 'none' }}>
+              {/* 1. HERO SECTION */}
             <div className="scroll-section hero-section">
               <h1 className="hero-title">
                 Darsh<br/><span style={{ color: '#ffffff' }}>Ohri</span>
@@ -367,6 +388,7 @@ export default function App() {
               <a href="/Darsh_Ohri_Resume.pdf" download="Darsh_Ohri_Resume.pdf" style={{ display: 'inline-block', padding: '1rem 3rem', fontSize: '1.1rem', fontWeight: '600', background: 'white', color: '#000000', textDecoration: 'none', borderRadius: '3rem', cursor: 'pointer', transition: 'transform 0.2s' }}>
                 Download Resume
               </a>
+            </div>
             </div>
           </Scroll>
         </ScrollControls>
