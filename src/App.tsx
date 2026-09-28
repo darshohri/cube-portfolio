@@ -10,7 +10,7 @@ function LikeCounter() {
 
   useEffect(() => {
     // Check if user has already liked
-    if (localStorage.getItem('portfolio_has_liked') === 'true') {
+    if (localStorage.getItem('portfolio_has_liked_v3') === 'true') {
       setHasLiked(true);
     }
 
@@ -21,7 +21,7 @@ function LikeCounter() {
         // Server confirms this IP has liked
         if (data.hasLiked) {
           setHasLiked(true);
-          localStorage.setItem('portfolio_has_liked', 'true');
+          localStorage.setItem('portfolio_has_liked_v3', 'true');
         }
       })
       .catch(err => console.error("Failed to fetch likes", err));
@@ -31,7 +31,7 @@ function LikeCounter() {
     if (isLiking || hasLiked) return;
     setIsLiking(true);
     setHasLiked(true);
-    localStorage.setItem('portfolio_has_liked', 'true');
+    localStorage.setItem('portfolio_has_liked_v3', 'true');
     setLikes(prev => (prev || 0) + 1); // Optimistic UI update
     
     try {
@@ -40,7 +40,7 @@ function LikeCounter() {
       
       if (data.error === "Already liked") {
         setHasLiked(true);
-        localStorage.setItem('portfolio_has_liked', 'true');
+        localStorage.setItem('portfolio_has_liked_v3', 'true');
         setLikes(data.likes);
       } else if (data.likes !== undefined) {
         setLikes(data.likes);
@@ -48,7 +48,7 @@ function LikeCounter() {
     } catch (err) {
       console.error("Failed to post like", err);
       setHasLiked(false);
-      localStorage.removeItem('portfolio_has_liked');
+      localStorage.removeItem('portfolio_has_liked_v3');
       setLikes(prev => Math.max(0, (prev || 0) - 1)); // Revert if failed
     } finally {
       setIsLiking(false);
