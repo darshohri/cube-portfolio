@@ -1,7 +1,78 @@
 import { Canvas, useFrame } from '@react-three/fiber';
 import { ScrollControls, Scroll, useScroll, Environment, Float, Edges, ContactShadows } from '@react-three/drei';
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import * as THREE from 'three';
+
+function LikeCounter() {
+  const [likes, setLikes] = useState<number | null>(null);
+  const [isLiking, setIsLiking] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/like')
+      .then(res => res.json())
+      .then(data => {
+        if (data.likes !== undefined) setLikes(data.likes);
+      })
+      .catch(err => console.error("Failed to fetch likes", err));
+  }, []);
+
+  const handleLike = async () => {
+    if (isLiking) return;
+    setIsLiking(true);
+    setLikes(prev => (prev || 0) + 1); // Optimistic UI update
+    
+    try {
+      const res = await fetch('/api/like', { method: 'POST' });
+      const data = await res.json();
+      if (data.likes !== undefined) {
+        setLikes(data.likes);
+      }
+    } catch (err) {
+      console.error("Failed to post like", err);
+      setLikes(prev => Math.max(0, (prev || 0) - 1)); // Revert if failed
+    } finally {
+      setIsLiking(false);
+    }
+  };
+
+  return (
+    <div 
+      style={{
+        position: 'fixed',
+        bottom: '30px',
+        right: '30px',
+        zIndex: 10000,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.8rem',
+        background: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)',
+        padding: '0.8rem 1.5rem',
+        borderRadius: '2rem',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        color: 'white',
+        cursor: 'pointer',
+        transition: 'transform 0.2s, background 0.2s',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+      }}
+      onClick={handleLike}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'scale(1.05)';
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'scale(1)';
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+      }}
+      title="Like this portfolio!"
+    >
+      <span style={{ fontSize: '1.2rem' }}>👍</span>
+      <span style={{ fontWeight: '600', fontSize: '1rem', minWidth: '1rem', textAlign: 'center' }}>
+        {likes === null ? '...' : likes.toLocaleString()}
+      </span>
+    </div>
+  );
+}
 
 const GRID_SIZE = 4;
 const SPACING = 0.6;
@@ -119,6 +190,7 @@ function CyberCube() {
 export default function App() {
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
+      <LikeCounter />
       <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
         <color attach="background" args={['#000000']} />
         
