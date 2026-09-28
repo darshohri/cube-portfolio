@@ -210,6 +210,15 @@ function CyberCube() {
 }
 
 export default function App() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
       <LikeCounter />
@@ -225,7 +234,9 @@ export default function App() {
         
         <ScrollControls pages={7} damping={0.15}>
           <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
-            <CyberCube />
+            <group scale={isMobile ? 0.65 : 1}>
+              <CyberCube />
+            </group>
           </Float>
           
           <ContactShadows position={[0, -3.5, 0]} opacity={0.4} scale={20} blur={2} far={10} color="#ffffff" />
