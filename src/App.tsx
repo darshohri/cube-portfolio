@@ -242,7 +242,7 @@ export default function App() {
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
-      <div style={{ opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out', pointerEvents: introFinished ? 'auto' : 'none' }}>
+      <div style={{ opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out', pointerEvents: introFinished ? '' : 'none' }}>
         <LikeCounter />
       </div>
       <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
@@ -265,7 +265,7 @@ export default function App() {
           <ContactShadows position={[0, -3.5, 0]} opacity={0.4} scale={20} blur={2} far={10} color="#ffffff" />
 
           <Scroll html style={{ width: '100vw' }}>
-            <div style={{ opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out', pointerEvents: introFinished ? 'auto' : 'none' }}>
+            <div style={{ opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out', pointerEvents: introFinished ? '' : 'none' }}>
               {/* 1. HERO SECTION */}
             <div className="scroll-section hero-section">
               <h1 className="hero-title">
