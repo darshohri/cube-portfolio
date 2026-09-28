@@ -3,12 +3,14 @@ import { ScrollControls, Scroll, useScroll, Environment, Float, Edges, ContactSh
 import { useRef, useMemo, useState, useEffect } from 'react';
 import * as THREE from 'three';
 
-function LikeCounter({ visible }: { visible: boolean }) {
+function LikeCounter() {
   const [likes, setLikes] = useState<number | null>(null);
   const [isLiking, setIsLiking] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 4000);
     // Check if user has already liked
     if (localStorage.getItem('portfolio_has_liked_v3') === 'true') {
       setHasLiked(true);
@@ -25,6 +27,8 @@ function LikeCounter({ visible }: { visible: boolean }) {
         }
       })
       .catch(err => console.error("Failed to fetch likes", err));
+
+    return () => clearTimeout(t);
   }, []);
 
   const handleLike = async () => {
@@ -225,31 +229,23 @@ function CyberCube() {
 
 export default function App() {
   const [isMobile, setIsMobile] = useState(false);
-  const [introFinished, setIntroFinished] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
-    const timer = setTimeout(() => {
-      setIntroFinished(true);
-    }, 4000);
 
     return () => {
       window.removeEventListener('resize', checkMobile);
-      clearTimeout(timer);
     };
   }, []);
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
       {/* Scroll Blocker Overlay: prevents desync by intercepting wheel/touch events before they hit ScrollControls during the 4-second intro */}
-      {!introFinished && (
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 99999, pointerEvents: 'auto' }} />
-      )}
+      <div className="scroll-blocker" />
       
-      <LikeCounter visible={introFinished} />
+      <LikeCounter />
       <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
         <color attach="background" args={['#000000']} />
         
@@ -269,7 +265,8 @@ export default function App() {
           
           <ContactShadows position={[0, -3.5, 0]} opacity={0.4} scale={20} blur={2} far={10} color="#ffffff" />
 
-          <Scroll html style={{ width: '100vw', opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out' }}>
+          <Scroll html style={{ width: '100vw' }}>
+            <div className="html-fade-in">
               {/* 1. HERO SECTION */}
             <div className="scroll-section hero-section">
               <h1 className="hero-title">
@@ -395,6 +392,7 @@ export default function App() {
               <a href="/Darsh_Ohri_Resume.pdf" download="Darsh_Ohri_Resume.pdf" style={{ display: 'inline-block', padding: '1rem 3rem', fontSize: '1.1rem', fontWeight: '600', background: 'white', color: '#000000', textDecoration: 'none', borderRadius: '3rem', cursor: 'pointer', transition: 'transform 0.2s' }}>
                 Download Resume
               </a>
+            </div>
             </div>
           </Scroll>
         </ScrollControls>
