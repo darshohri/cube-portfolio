@@ -264,8 +264,7 @@ export default function App() {
           
           <ContactShadows position={[0, -3.5, 0]} opacity={0.4} scale={20} blur={2} far={10} color="#ffffff" />
 
-          <Scroll html style={{ width: '100vw' }}>
-            <div style={{ opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out', pointerEvents: introFinished ? '' : 'none' }}>
+          <Scroll html style={{ width: '100vw', opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out' }}>
               {/* 1. HERO SECTION */}
             <div className="scroll-section hero-section">
               <h1 className="hero-title">
@@ -391,7 +390,6 @@ export default function App() {
               <a href="/Darsh_Ohri_Resume.pdf" download="Darsh_Ohri_Resume.pdf" style={{ display: 'inline-block', padding: '1rem 3rem', fontSize: '1.1rem', fontWeight: '600', background: 'white', color: '#000000', textDecoration: 'none', borderRadius: '3rem', cursor: 'pointer', transition: 'transform 0.2s' }}>
                 Download Resume
               </a>
-            </div>
             </div>
           </Scroll>
         </ScrollControls>
