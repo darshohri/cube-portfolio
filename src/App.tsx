@@ -260,7 +260,7 @@ export default function App() {
         
         <Environment preset="city" />
         
-        <ScrollControls pages={7} damping={0.15}>
+        <ScrollControls pages={8} damping={0.15}>
           <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
             <group scale={isMobile ? 0.65 : 1}>
               <CyberCube />
@@ -378,7 +378,21 @@ export default function App() {
               </ul>
             </div>
 
-            {/* 7. CONTACT SECTION */}
+            {/* 7. CERTIFICATIONS SECTION */}
+            <div className="scroll-section certifications-section">
+              <h2 className="section-title">Certifications &<br/>Virtual Experiences.</h2>
+              <ul style={{ listStyleType: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem', color: '#cbd5e1', fontSize: '1.1rem', marginTop: '2rem' }}>
+                <li><strong style={{ color: 'white' }}>Tata</strong> — GenAI Powered Data Analytics Virtual Experience</li>
+                <li><strong style={{ color: 'white' }}>JPMorgan Chase</strong> — Quantitative Research Virtual Experience</li>
+                <li><strong style={{ color: 'white' }}>Deloitte</strong> — Technology Consulting Virtual Experience</li>
+                <li><strong style={{ color: 'white' }}>BCG</strong> — GenAI Virtual Experience</li>
+                <li><strong style={{ color: 'white' }}>Google</strong> — Solution Challenge 2026</li>
+                <li><strong style={{ color: 'white' }}>StoxraHack 2026</strong> — Finalist Certificate</li>
+                <li><strong style={{ color: 'white' }}>Vanderbilt University</strong> — Prompt Engineering for ChatGPT</li>
+              </ul>
+            </div>
+
+            {/* 8. CONTACT SECTION */}
             <div className="scroll-section contact-section">
               <h2 className="contact-title">Let's Connect.</h2>
               <p style={{ fontSize: '1.2rem', color: '#94a3b8', marginBottom: '2rem' }}>Ready to build something extraordinary?</p>
