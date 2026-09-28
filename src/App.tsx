@@ -18,6 +18,11 @@ function LikeCounter() {
       .then(res => res.json())
       .then(data => {
         if (data.likes !== undefined) setLikes(data.likes);
+        // Server confirms this IP has liked
+        if (data.hasLiked) {
+          setHasLiked(true);
+          localStorage.setItem('portfolio_has_liked', 'true');
+        }
       })
       .catch(err => console.error("Failed to fetch likes", err));
   }, []);
@@ -32,7 +37,12 @@ function LikeCounter() {
     try {
       const res = await fetch('/api/like', { method: 'POST' });
       const data = await res.json();
-      if (data.likes !== undefined) {
+      
+      if (data.error === "Already liked") {
+        setHasLiked(true);
+        localStorage.setItem('portfolio_has_liked', 'true');
+        setLikes(data.likes);
+      } else if (data.likes !== undefined) {
         setLikes(data.likes);
       }
     } catch (err) {

@@ -23,21 +23,42 @@ export default async function handler(request: Request) {
   try {
     if (!process.env.KV_REST_API_URL) {
       // Return a dummy value if running locally without KV env vars
-      return new Response(JSON.stringify({ likes: 42 }), {
+      return new Response(JSON.stringify({ likes: 42, hasLiked: false }), {
         status: 200,
         headers: { 'Content-Type': 'application/json', ...headers }
       });
     }
 
+    // Get the client's IP address from Vercel headers
+    const ip = request.headers.get('x-forwarded-for') || 'unknown';
+    const ipKey = `portfolio_liked_ip_${ip}`;
+
     if (request.method === 'POST') {
-      const likes = await redis.incr('portfolio_likes_v2');
+      // Check if this IP has already liked
+      const alreadyLiked = await redis.get(ipKey);
+      
+      if (alreadyLiked) {
+         const likes = (await redis.get('portfolio_likes_v3')) || 0;
+         return new Response(JSON.stringify({ likes, error: "Already liked" }), {
+           status: 200,
+           headers: { 'Content-Type': 'application/json', ...headers },
+         });
+      }
+
+      // Mark IP as liked and increment counter
+      await redis.set(ipKey, 'true');
+      const likes = await redis.incr('portfolio_likes_v3');
+      
       return new Response(JSON.stringify({ likes }), {
         status: 200,
         headers: { 'Content-Type': 'application/json', ...headers },
       });
     } else {
-      const likes = (await redis.get('portfolio_likes_v2')) || 0;
-      return new Response(JSON.stringify({ likes }), {
+      // GET method
+      const likes = (await redis.get('portfolio_likes_v3')) || 0;
+      const hasLiked = await redis.get(ipKey) === 'true';
+      
+      return new Response(JSON.stringify({ likes, hasLiked }), {
         status: 200,
         headers: { 'Content-Type': 'application/json', ...headers },
       });
