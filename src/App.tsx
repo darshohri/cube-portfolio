@@ -6,8 +6,14 @@ import * as THREE from 'three';
 function LikeCounter() {
   const [likes, setLikes] = useState<number | null>(null);
   const [isLiking, setIsLiking] = useState(false);
+  const [hasLiked, setHasLiked] = useState(false);
 
   useEffect(() => {
+    // Check if user has already liked
+    if (localStorage.getItem('portfolio_has_liked') === 'true') {
+      setHasLiked(true);
+    }
+
     fetch('/api/like')
       .then(res => res.json())
       .then(data => {
@@ -17,8 +23,10 @@ function LikeCounter() {
   }, []);
 
   const handleLike = async () => {
-    if (isLiking) return;
+    if (isLiking || hasLiked) return;
     setIsLiking(true);
+    setHasLiked(true);
+    localStorage.setItem('portfolio_has_liked', 'true');
     setLikes(prev => (prev || 0) + 1); // Optimistic UI update
     
     try {
@@ -29,6 +37,8 @@ function LikeCounter() {
       }
     } catch (err) {
       console.error("Failed to post like", err);
+      setHasLiked(false);
+      localStorage.removeItem('portfolio_has_liked');
       setLikes(prev => Math.max(0, (prev || 0) - 1)); // Revert if failed
     } finally {
       setIsLiking(false);
@@ -45,28 +55,30 @@ function LikeCounter() {
         display: 'flex',
         alignItems: 'center',
         gap: '0.8rem',
-        background: 'rgba(255, 255, 255, 0.1)',
+        background: hasLiked ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)',
         backdropFilter: 'blur(10px)',
         padding: '0.8rem 1.5rem',
         borderRadius: '2rem',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
+        border: hasLiked ? '1px solid rgba(255, 255, 255, 0.5)' : '1px solid rgba(255, 255, 255, 0.2)',
         color: 'white',
-        cursor: 'pointer',
+        cursor: hasLiked ? 'default' : 'pointer',
         transition: 'transform 0.2s, background 0.2s',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+        boxShadow: hasLiked ? '0 0 15px rgba(255,255,255,0.2)' : '0 4px 12px rgba(0,0,0,0.5)',
       }}
       onClick={handleLike}
       onMouseEnter={(e) => {
+        if (hasLiked) return;
         e.currentTarget.style.transform = 'scale(1.05)';
         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
       }}
       onMouseLeave={(e) => {
+        if (hasLiked) return;
         e.currentTarget.style.transform = 'scale(1)';
         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
       }}
-      title="Like this portfolio!"
+      title={hasLiked ? "You already liked this!" : "Like this portfolio!"}
     >
-      <span style={{ fontSize: '1.2rem' }}>👍</span>
+      <span style={{ fontSize: '1.2rem', opacity: hasLiked ? 1 : 0.8 }}>👍</span>
       <span style={{ fontWeight: '600', fontSize: '1rem', minWidth: '1rem', textAlign: 'center' }}>
         {likes === null ? '...' : likes.toLocaleString()}
       </span>

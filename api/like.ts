@@ -30,13 +30,13 @@ export default async function handler(request: Request) {
     }
 
     if (request.method === 'POST') {
-      const likes = await redis.incr('portfolio_likes');
+      const likes = await redis.incr('portfolio_likes_v2');
       return new Response(JSON.stringify({ likes }), {
         status: 200,
         headers: { 'Content-Type': 'application/json', ...headers },
       });
     } else {
-      const likes = (await redis.get('portfolio_likes')) || 0;
+      const likes = (await redis.get('portfolio_likes_v2')) || 0;
       return new Response(JSON.stringify({ likes }), {
         status: 200,
         headers: { 'Content-Type': 'application/json', ...headers },
