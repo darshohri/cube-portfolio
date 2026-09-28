@@ -232,11 +232,11 @@ export default function App() {
 
           <Scroll html style={{ width: '100vw' }}>
             {/* 1. HERO SECTION */}
-            <div style={{ position: 'absolute', top: '35vh', left: '10vw', color: 'white', maxWidth: '50vw' }}>
-              <h1 style={{ fontSize: '5rem', fontWeight: '800', lineHeight: 1, letterSpacing: '-0.02em', marginBottom: '1rem' }}>
+            <div className="scroll-section hero-section">
+              <h1 className="hero-title">
                 Darsh<br/><span style={{ color: '#ffffff' }}>Ohri</span>
               </h1>
-              <p style={{ fontSize: '1.5rem', color: '#94a3b8', fontWeight: 300, marginBottom: '0.5rem' }}>
+              <p className="hero-subtitle" style={{ color: '#94a3b8', fontWeight: 300, marginBottom: '0.5rem' }}>
                 Full-Stack & AI Software Developer
               </p>
               <p style={{ fontSize: '1.1rem', color: '#64748b', fontWeight: 300 }}>
@@ -245,13 +245,13 @@ export default function App() {
             </div>
 
             {/* 2. SKILLS SECTION */}
-            <div style={{ position: 'absolute', top: '130vh', right: '10vw', color: 'white', maxWidth: '45vw', textAlign: 'right' }}>
-              <h2 style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>Full-Stack <br/>& AI Integration.</h2>
+            <div className="scroll-section skills-section">
+              <h2 className="section-title">Full-Stack <br/>& AI Integration.</h2>
               <p style={{ fontSize: '1.2rem', color: '#cbd5e1', lineHeight: 1.6 }}>
                 Bridging the gap between complex data and intuitive user experiences.
                 Specialized in LLM integrations (Gemini, Groq) and modern web architectures.
               </p>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.8rem', marginTop: '2rem', flexWrap: 'wrap' }}>
+              <div className="flex-container" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.8rem', marginTop: '2rem', flexWrap: 'wrap' }}>
                 {['React', 'Next.js', 'TypeScript', 'FastAPI', 'Python', 'Tailwind CSS', 'Three.js', 'Firebase', 'PostgreSQL', 'Gemini API'].map(skill => (
                   <span key={skill} style={{ padding: '0.5rem 1.5rem', background: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255, 255, 255, 0.3)', borderRadius: '2rem', fontSize: '0.9rem' }}>
                     {skill}
@@ -261,8 +261,8 @@ export default function App() {
             </div>
 
             {/* 3. EXPERIENCE SECTION */}
-            <div style={{ position: 'absolute', top: '230vh', left: '10vw', color: 'white', maxWidth: '45vw' }}>
-              <h2 style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>Professional<br/>Experience.</h2>
+            <div className="scroll-section experience-section">
+              <h2 className="section-title">Professional<br/>Experience.</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: '2rem' }}>
                 <div style={{ paddingLeft: '1.5rem', borderLeft: '2px solid #ffffff' }}>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: '600' }}>LaunchED Global</h3>
@@ -278,8 +278,8 @@ export default function App() {
             </div>
 
             {/* 4. PROJECTS SECTION 1 */}
-            <div style={{ position: 'absolute', top: '330vh', right: '10vw', color: 'white', maxWidth: '45vw', textAlign: 'right' }}>
-              <h2 style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>Selected<br/>Projects.</h2>
+            <div className="scroll-section projects-1-section">
+              <h2 className="section-title">Selected<br/>Projects.</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem' }}>
                 <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid #ffffff', borderRadius: '1rem 0 0 1rem' }}>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
@@ -303,7 +303,7 @@ export default function App() {
             </div>
 
             {/* 5. PROJECTS SECTION 2 */}
-            <div style={{ position: 'absolute', top: '430vh', left: '10vw', color: 'white', maxWidth: '45vw' }}>
+            <div className="scroll-section projects-2-section">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem' }}>
                 <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid #ffffff', borderRadius: '0 1rem 1rem 0' }}>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
@@ -327,8 +327,8 @@ export default function App() {
             </div>
 
             {/* 6. ACHIEVEMENTS SECTION */}
-            <div style={{ position: 'absolute', top: '530vh', right: '10vw', color: 'white', maxWidth: '45vw', textAlign: 'right' }}>
-              <h2 style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>Awards &<br/>Recognitions.</h2>
+            <div className="scroll-section achievements-section">
+              <h2 className="section-title">Awards &<br/>Recognitions.</h2>
               <ul style={{ listStyleType: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem', color: '#cbd5e1', fontSize: '1.1rem' }}>
                 <li><strong style={{ color: 'white' }}>1st Place</strong> — Plaksha Prayas Tech Hackathon (Future Finance)</li>
                 <li><strong style={{ color: 'white' }}>Winner</strong> — ACM-SIH Ideathon</li>
@@ -339,11 +339,11 @@ export default function App() {
             </div>
 
             {/* 7. CONTACT SECTION */}
-            <div style={{ position: 'absolute', top: '630vh', left: '0', width: '100vw', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-              <h2 style={{ fontSize: '4rem', fontWeight: '800', marginBottom: '1rem' }}>Let's Connect.</h2>
+            <div className="scroll-section contact-section">
+              <h2 className="contact-title">Let's Connect.</h2>
               <p style={{ fontSize: '1.2rem', color: '#94a3b8', marginBottom: '2rem' }}>Ready to build something extraordinary?</p>
               
-              <div style={{ display: 'flex', gap: '2rem', marginBottom: '3rem' }}>
+              <div className="contact-links">
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to=darshohri@gmail.com" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff', textDecoration: 'none', fontSize: '1.1rem' }}>darshohri@gmail.com</a>
                 <span style={{ color: '#475569' }}>|</span>
                 <a href="https://www.linkedin.com/in/darsh-ohri" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff', textDecoration: 'none', fontSize: '1.1rem' }}>LinkedIn</a>

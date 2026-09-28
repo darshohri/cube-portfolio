@@ -497,5 +497,96 @@ body.light {
   border-color: #cbd5e1 !important;
 }
 
+/* =========================================
+   DESKTOP STYLES (Untouched)
+   ========================================= */
+.scroll-section {
+  position: absolute;
+  color: white;
+}
+
+.hero-section {
+  top: 35vh; left: 10vw; max-width: 50vw;
+}
+.hero-title { font-size: 5rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em; margin-bottom: 1rem; }
+.hero-subtitle { font-size: 1.5rem; }
+
+.skills-section {
+  top: 130vh; right: 10vw; max-width: 45vw; text-align: right;
+}
+.section-title { font-size: 3.5rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+.experience-section {
+  top: 230vh; left: 10vw; max-width: 45vw;
+}
+
+.projects-1-section {
+  top: 330vh; right: 10vw; max-width: 45vw; text-align: right;
+}
+
+.projects-2-section {
+  top: 430vh; left: 10vw; max-width: 45vw;
+}
+
+.achievements-section {
+  top: 530vh; right: 10vw; max-width: 45vw; text-align: right;
+}
+
+.contact-section {
+  top: 630vh; left: 0; width: 100vw; display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.contact-title { font-size: 4rem; font-weight: 800; margin-bottom: 1rem; }
+.contact-links { display: flex; gap: 2rem; margin-bottom: 3rem; }
+
+/* =========================================
+   MOBILE OVERRIDES (Strictly < 768px)
+   ========================================= */
+@media (max-width: 768px) {
+  /* Fluid typography and full-width layouts for small screens */
+  
+  .hero-section {
+    top: 20vh; left: 5vw; max-width: 90vw; text-align: center;
+  }
+  .hero-title { font-size: 3.5rem; }
+  .hero-subtitle { font-size: 1.2rem; }
+
+  .skills-section {
+    top: 130vh; right: 5vw; left: 5vw; max-width: 90vw; text-align: left;
+  }
+  .section-title { font-size: 2.5rem; }
+  .skills-section .flex-container { justify-content: flex-start !important; }
+
+  .experience-section {
+    top: 230vh; left: 5vw; max-width: 90vw;
+  }
+
+  .projects-1-section {
+    top: 330vh; right: 5vw; left: 5vw; max-width: 90vw; text-align: left;
+  }
+  
+  .projects-2-section {
+    top: 440vh; left: 5vw; max-width: 90vw;
+  }
+
+  .achievements-section {
+    top: 550vh; right: 5vw; left: 5vw; max-width: 90vw; text-align: left;
+  }
+
+  .contact-section {
+    top: 650vh; padding: 0 5vw; text-align: center;
+  }
+  .contact-title { font-size: 3rem; }
+  .contact-links { flex-direction: column; gap: 1rem; align-items: center; } 
+  
+  /* Touch target optimization */
+  .contact-links a {
+    padding: 12px;
+    display: inline-block;
+  }
+  .contact-links span {
+    display: none;
+  }
+}
+
 
 
