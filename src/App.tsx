@@ -137,8 +137,8 @@ function CyberCube() {
   useFrame((state) => {
     if (!groupRef.current || !scroll) return;
     
-    // Intro animation progress (0 to 1 over 2.5 seconds)
-    const rawProgress = state.clock.elapsedTime / 2.5;
+    // Intro animation progress (0 to 1 over 4 seconds)
+    const rawProgress = state.clock.elapsedTime / 4.0;
     const isIntro = rawProgress < 1;
     const easedProgress = 1 - Math.pow(1 - Math.min(rawProgress, 1), 3); // Cubic ease out
     
@@ -146,13 +146,16 @@ function CyberCube() {
     const offset = scroll.offset;
     
     // 1. Group Rotation
-    groupRef.current.rotation.y = isIntro 
-      ? state.clock.elapsedTime * 0.5 // Spin slightly faster during intro
-      : offset * Math.PI * 2 + state.clock.elapsedTime * 0.1;
-      
-    groupRef.current.rotation.x = isIntro
-      ? state.clock.elapsedTime * 0.2
-      : offset * Math.PI + Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
+    // The base rotation that we want it to seamlessly land on
+    const baseRotY = offset * Math.PI * 2 + state.clock.elapsedTime * 0.1;
+    const baseRotX = offset * Math.PI + Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
+    
+    // Add extra spins that smoothly fade out to 0 as intro finishes
+    const extraSpinY = (1 - easedProgress) * Math.PI * 4;
+    const extraSpinX = (1 - easedProgress) * Math.PI * 2;
+    
+    groupRef.current.rotation.y = baseRotY + extraSpinY;
+    groupRef.current.rotation.x = baseRotX + extraSpinX;
     
     // 2. Fragment & Explode
     const explosionFactor = Math.pow(offset, 1.5) * 15;
@@ -229,7 +232,7 @@ export default function App() {
     
     const timer = setTimeout(() => {
       setIntroFinished(true);
-    }, 2500);
+    }, 4000);
 
     return () => {
       window.removeEventListener('resize', checkMobile);
