@@ -242,7 +242,7 @@ export default function App() {
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
-      <div style={{ opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out', pointerEvents: introFinished ? '' : 'none' }}>
+      <div style={{ opacity: introFinished ? 1 : 0, transition: 'opacity 1s ease-in-out', pointerEvents: introFinished ? 'auto' : 'none' }}>
         <LikeCounter />
       </div>
       <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
