@@ -82,6 +82,10 @@ function LikeCounter() {
         pointerEvents: visible ? (hasLiked ? 'auto' : 'auto') : 'none',
       }}
       onClick={handleLike}
+      onPointerDown={(e) => {
+        // Prevent touch from firing hover/click emulation that swallows events on mobile
+        handleLike();
+      }}
       onMouseEnter={(e) => {
         if (hasLiked) return;
         e.currentTarget.style.transform = 'scale(1.05)';
