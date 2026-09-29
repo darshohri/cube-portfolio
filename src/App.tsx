@@ -115,6 +115,18 @@ function CyberCube() {
   const scroll = useScroll();
   const [draggedCubeIndex, setDraggedCubeIndex] = useState<number | null>(null);
   const [hoveredCubeIndex, setHoveredCubeIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (draggedCubeIndex !== null) {
+      document.body.style.userSelect = 'none';
+      // @ts-ignore
+      document.body.style.webkitUserSelect = 'none';
+    } else {
+      document.body.style.userSelect = 'auto';
+      // @ts-ignore
+      document.body.style.webkitUserSelect = 'auto';
+    }
+  }, [draggedCubeIndex]);
   
   // Pre-calculate positions
   const cubes = useMemo(() => {
@@ -324,10 +336,10 @@ export default function App() {
               <h1 className="hero-title">
                 Darsh<br/><span style={{ color: '#ffffff' }}>Ohri</span>
               </h1>
-              <p className="hero-subtitle" style={{ color: '#94a3b8', fontWeight: 300, marginBottom: '0.5rem' }}>
+              <p className="hero-subtitle" style={{ color: '#e2e8f0', fontWeight: 400, marginBottom: '0.5rem', letterSpacing: '0.5px' }}>
                 Full-Stack & AI Software Developer
               </p>
-              <p style={{ fontSize: '1.1rem', color: '#64748b', fontWeight: 300 }}>
+              <p style={{ fontSize: '1.1rem', color: '#94a3b8', fontWeight: 400, letterSpacing: '0.5px' }}>
                 B.Tech CSE (Data Science) @ NMIMS Chandigarh
               </p>
             </div>
