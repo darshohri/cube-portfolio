@@ -319,6 +319,7 @@ function CyberCube({ bootComplete }: { bootComplete: boolean }) {
 
 function BootSequence({ onComplete }: { onComplete: () => void }) {
   const [lines, setLines] = useState<string[]>([]);
+  const [currentLine, setCurrentLine] = useState<string>("");
   const [visible, setVisible] = useState(true);
   const [cursorVisible, setCursorVisible] = useState(true);
 
@@ -332,12 +333,28 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
 
   useEffect(() => {
     let isCancelled = false;
+    
     const runSequence = async () => {
       for (let i = 0; i < sequence.length; i++) {
-        await new Promise(r => setTimeout(r, 400 + Math.random() * 300));
-        if (isCancelled) return;
-        setLines(prev => [...prev, sequence[i]]);
+        const line = sequence[i];
+        let currentText = "";
+        
+        // Type letter by letter
+        for (let j = 0; j < line.length; j++) {
+          await new Promise(r => setTimeout(r, 20 + Math.random() * 30));
+          if (isCancelled) return;
+          currentText += line[j];
+          setCurrentLine(currentText);
+        }
+        
+        setLines(prev => [...prev, line]);
+        setCurrentLine("");
+        
+        if (i < sequence.length - 1) {
+          await new Promise(r => setTimeout(r, 200 + Math.random() * 200));
+        }
       }
+      
       await new Promise(r => setTimeout(r, 600));
       if (isCancelled) return;
       setVisible(false);
@@ -345,6 +362,7 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
         if (!isCancelled) onComplete();
       }, 500); // Trigger complete before full fade out to start cube animation slightly earlier
     };
+    
     runSequence();
     
     const cursorInterval = setInterval(() => setCursorVisible(v => !v), 500);
@@ -375,7 +393,7 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
       pointerEvents: visible ? 'all' : 'none',
       fontFamily: 'monospace',
       color: '#e2e8f0',
-      fontSize: 'clamp(1rem, 4vw, 1.5rem)',
+      fontSize: 'clamp(0.9rem, 3.5vw, 1.5rem)',
     }}>
       <div style={{ maxWidth: '600px', width: '100%' }}>
         {lines.map((line, i) => (
@@ -387,6 +405,7 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
         {visible && lines.length < sequence.length && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{ color: '#ffffff', marginRight: '0.8rem' }}>&gt;</span>
+            {currentLine}
             <span style={{ opacity: cursorVisible ? 1 : 0 }}>█</span>
           </div>
         )}
