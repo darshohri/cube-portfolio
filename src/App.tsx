@@ -357,7 +357,7 @@ export default function App() {
   }, []);
 
   return (
-    <>
+    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
       {!bootComplete && <BootSequence onComplete={() => setBootComplete(true)} />}
       <LikeCounter />
       <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
@@ -517,6 +517,6 @@ export default function App() {
           </Scroll>
         </ScrollControls>
       </Canvas>
-    </>
+    </div>
   );
 }
