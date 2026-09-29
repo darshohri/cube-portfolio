@@ -318,8 +318,6 @@ function CyberCube({ bootComplete }: { bootComplete: boolean }) {
 }
 
 function BootSequence({ onComplete }: { onComplete: () => void }) {
-  const [lines, setLines] = useState<string[]>([]);
-  const [currentLine, setCurrentLine] = useState<string>("");
   const [visible, setVisible] = useState(true);
   const [cursorVisible, setCursorVisible] = useState(true);
 
@@ -335,27 +333,7 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
     let isCancelled = false;
     
     const runSequence = async () => {
-      for (let i = 0; i < sequence.length; i++) {
-        const line = sequence[i];
-        let currentText = "";
-        
-        // Type letter by letter
-        for (let j = 0; j < line.length; j++) {
-          await new Promise(r => setTimeout(r, 5 + Math.random() * 10)); // Super fast typing
-          if (isCancelled) return;
-          currentText += line[j];
-          setCurrentLine(currentText);
-        }
-        
-        setLines(prev => [...prev, line]);
-        setCurrentLine("");
-        
-        if (i < sequence.length - 1) {
-          await new Promise(r => setTimeout(r, 80 + Math.random() * 50)); // Short pause between lines
-        }
-      }
-      
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 1500)); // Just show it for a short time
       if (isCancelled) return;
       setVisible(false);
       setTimeout(() => {
@@ -396,16 +374,15 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
       fontSize: 'clamp(0.9rem, 3.5vw, 1.5rem)',
     }}>
       <div style={{ maxWidth: '600px', width: '100%' }}>
-        {lines.map((line, i) => (
+        {sequence.map((line, i) => (
           <div key={i} style={{ marginBottom: '1rem' }}>
             <span style={{ color: '#ffffff', marginRight: '0.8rem' }}>&gt;</span>
             {line}
           </div>
         ))}
-        {visible && lines.length < sequence.length && (
+        {visible && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{ color: '#ffffff', marginRight: '0.8rem' }}>&gt;</span>
-            {currentLine}
             <span style={{ opacity: cursorVisible ? 1 : 0 }}>█</span>
           </div>
         )}
@@ -414,7 +391,7 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-function TouchScroller() {
+function CanvasScroller() {
   const scroll = useScroll();
   const { gl } = useThree();
 
@@ -446,12 +423,19 @@ function TouchScroller() {
       }
     };
 
+    const handleWheel = (e: WheelEvent) => {
+      if (e.target !== gl.domElement) return;
+      scroll.el.scrollTop += e.deltaY;
+    };
+
     gl.domElement.addEventListener('touchstart', handleTouchStart, { passive: true });
     gl.domElement.addEventListener('touchmove', handleTouchMove, { passive: true });
+    gl.domElement.addEventListener('wheel', handleWheel, { passive: true });
 
     return () => {
       gl.domElement.removeEventListener('touchstart', handleTouchStart);
       gl.domElement.removeEventListener('touchmove', handleTouchMove);
+      gl.domElement.removeEventListener('wheel', handleWheel);
     };
   }, [scroll, gl.domElement]);
 
@@ -497,7 +481,7 @@ export default function App() {
         <Environment files="/potsdamer_platz_1k.hdr" />
 
         <ScrollControls pages={isMobile ? 10 : 8.2} damping={0.15}>
-          <TouchScroller />
+          <CanvasScroller />
           <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
             <group scale={isMobile ? 0.45 : 1}>
               <CyberCube bootComplete={bootComplete} />
