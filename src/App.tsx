@@ -326,8 +326,8 @@ export default function App() {
                       FinWise AI ↗
                     </a>
                   </h3>
-                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>AI-powered personal-finance platform with scam detection, goal tracking, and market simulations using Gemini and Groq LLMs.</p>
-                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • FastAPI • Firebase • Gemini • Tailwind</p>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>AI-powered personal finance platform combining an AI financial mentor, scam & fraud detection, financial goal tracking, interactive market simulations, and gamified financial education.</p>
+                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • FastAPI • Python • Tailwind CSS • Three.js • Framer Motion • Firebase • Groq • Gemini</p>
                 </div>
                 <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid rgba(255, 255, 255, 0.4)', borderRadius: '1rem 0 0 1rem' }}>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
@@ -335,8 +335,8 @@ export default function App() {
                       Ziro ↗
                     </a>
                   </h3>
-                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>Intelligent blockchain payment layer reducing transaction friction by 30% with zero-gas L2 micro-remittances and AI scam detection.</p>
-                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • TypeScript • FastAPI • Polygon Amoy</p>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>Intelligent blockchain payment layer built to make money movement smarter, safer, and more resilient. Combines zero-gas Layer 2 micro-remittances, pre-flight AI scam and address poisoning protection, an offline-first SMS/QR vault engine, and privacy-preserving Zero-Knowledge credit scoring.</p>
+                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • TypeScript • FastAPI • Python • Tailwind CSS • Framer Motion • Polygon Amoy</p>
                 </div>
               </div>
             </div>
@@ -350,8 +350,8 @@ export default function App() {
                       Lumiere ↗
                     </a>
                   </h3>
-                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>Healthcare system cutting patient-record audit time by 18s/record via FastAPI-backed identity resolution and visual diffs.</p>
-                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • PostgreSQL • FastAPI</p>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>AI-powered patient identity resolution platform designed to reconcile duplicate and fragmented healthcare records using intelligent matching and confidence-based resolution.</p>
+                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • Tailwind CSS • FastAPI • Python • PostgreSQL</p>
                 </div>
                 <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid rgba(255, 255, 255, 0.4)', borderRadius: '0 1rem 1rem 0' }}>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
@@ -359,8 +359,8 @@ export default function App() {
                       BYOK (Bring Your Own Key) ↗
                     </a>
                   </h3>
-                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>Offline-first AI chat interface with 100% on-device data privacy via IndexedDB and the official @google/genai SDK.</p>
-                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>React • TypeScript • IndexedDB • API</p>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>Bring Your Own Key AI chatbot that allows users to securely use their own API keys for personalized AI conversations.</p>
+                  <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>JavaScript • HTML • CSS • API</p>
                 </div>
               </div>
             </div>
