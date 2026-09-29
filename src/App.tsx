@@ -113,6 +113,8 @@ const CUBE_SIZE = 0.55;
 function CyberCube() {
   const groupRef = useRef<THREE.Group>(null);
   const scroll = useScroll();
+  const [draggedCubeIndex, setDraggedCubeIndex] = useState<number | null>(null);
+  const [hoveredCubeIndex, setHoveredCubeIndex] = useState<number | null>(null);
   
   // Pre-calculate positions
   const cubes = useMemo(() => {
@@ -184,6 +186,16 @@ function CyberCube() {
         // Randomly spin while assembling, then settle to identity quaternion
         spinningQuat.setFromAxisAngle(cubeData.randomAxis, cubeData.spinPhase * (1 - easedProgress) * 5);
         child.quaternion.slerpQuaternions(spinningQuat, identityQuat, easedProgress);
+      } else if (draggedCubeIndex === i && offset < 0.01) {
+        const vec = new THREE.Vector3(state.pointer.x, state.pointer.y, 0.5);
+        vec.unproject(state.camera);
+        const dir = vec.sub(state.camera.position).normalize();
+        const distance = (3 - state.camera.position.z) / dir.z;
+        const worldPos = state.camera.position.clone().add(dir.multiplyScalar(distance));
+        const localPos = groupRef.current.worldToLocal(worldPos);
+        
+        child.position.lerp(localPos, 0.5);
+        child.quaternion.slerp(identityQuat, 0.5);
       } else {
         const slerpFactor = Math.min(Math.max((offset - 0.25) / 0.1, 0), 1);
         spinningQuat.setFromAxisAngle(cubeData.randomAxis, cubeData.spinPhase);
@@ -191,15 +203,17 @@ function CyberCube() {
         
         if (offset < 0.3) {
           const localExplosion = offset * 2;
-          child.position.copy(cubeData.basePos).add(pushDirection.multiplyScalar(localExplosion));
+          const targetPos = cubeData.basePos.clone().add(pushDirection.multiplyScalar(localExplosion));
+          child.position.lerp(targetPos, 0.15);
         } else {
           const fragmentProgress = (offset - 0.3) / 0.7;
           const currentExplosion = 0.6 + fragmentProgress * explosionFactor;
           const noiseX = Math.sin(state.clock.elapsedTime * cubeData.randomRotationSpeed) * fragmentProgress;
           const noiseY = Math.cos(state.clock.elapsedTime * cubeData.randomRotationSpeed * 1.2) * fragmentProgress;
-          child.position.copy(cubeData.basePos)
+          const targetPos = cubeData.basePos.clone()
             .add(pushDirection.multiplyScalar(currentExplosion))
             .add(new THREE.Vector3(noiseX, noiseY, 0));
+          child.position.lerp(targetPos, 0.15);
         }
       }
     });
@@ -208,7 +222,42 @@ function CyberCube() {
   return (
     <group ref={groupRef}>
       {cubes.map((cube, i) => (
-        <mesh key={i}>
+        <mesh 
+          key={i}
+          onPointerOver={(e) => {
+            if (scroll.offset < 0.01) {
+              e.stopPropagation();
+              setHoveredCubeIndex(i);
+              if (draggedCubeIndex === null) document.body.style.cursor = 'grab';
+            }
+          }}
+          onPointerOut={(e) => {
+            if (hoveredCubeIndex === i) {
+              setHoveredCubeIndex(null);
+              if (draggedCubeIndex === null) document.body.style.cursor = 'auto';
+            }
+          }}
+          onPointerDown={(e) => {
+            if (scroll.offset < 0.01) {
+              e.stopPropagation();
+              setDraggedCubeIndex(i);
+              document.body.style.cursor = 'grabbing';
+              if (e.target && typeof (e.target as any).setPointerCapture === 'function') {
+                (e.target as any).setPointerCapture(e.pointerId);
+              }
+            }
+          }}
+          onPointerUp={(e) => {
+            if (draggedCubeIndex === i) {
+              e.stopPropagation();
+              setDraggedCubeIndex(null);
+              document.body.style.cursor = 'auto';
+              if (e.target && typeof (e.target as any).releasePointerCapture === 'function') {
+                (e.target as any).releasePointerCapture(e.pointerId);
+              }
+            }
+          }}
+        >
           <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
           <meshPhysicalMaterial 
             color="#444444" 
