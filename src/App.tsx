@@ -339,7 +339,7 @@ export default function App() {
               <p className="hero-subtitle" style={{ color: '#e2e8f0', fontWeight: 400, marginBottom: '0.5rem', letterSpacing: '0.5px' }}>
                 Full-Stack & AI Software Developer
               </p>
-              <p style={{ fontSize: '1.1rem', color: '#94a3b8', fontWeight: 400, letterSpacing: '0.5px' }}>
+              <p className="hero-subtitle" style={{ color: '#e2e8f0', fontWeight: 400, letterSpacing: '0.5px' }}>
                 B.Tech CSE (Data Science) @ NMIMS Chandigarh
               </p>
             </div>
