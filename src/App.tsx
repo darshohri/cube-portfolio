@@ -341,7 +341,7 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
         
         // Type letter by letter
         for (let j = 0; j < line.length; j++) {
-          await new Promise(r => setTimeout(r, 20 + Math.random() * 30));
+          await new Promise(r => setTimeout(r, 5 + Math.random() * 10)); // Super fast typing
           if (isCancelled) return;
           currentText += line[j];
           setCurrentLine(currentText);
@@ -351,7 +351,7 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
         setCurrentLine("");
         
         if (i < sequence.length - 1) {
-          await new Promise(r => setTimeout(r, 200 + Math.random() * 200));
+          await new Promise(r => setTimeout(r, 80 + Math.random() * 50)); // Short pause between lines
         }
       }
       
@@ -414,6 +414,50 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
   );
 }
 
+function TouchScroller() {
+  const scroll = useScroll();
+  const { gl } = useThree();
+
+  useEffect(() => {
+    if (!scroll || !scroll.el || !gl.domElement) return;
+
+    let startY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.target !== gl.domElement) return;
+      if (e.touches.length > 0) {
+        startY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.target !== gl.domElement) return;
+      
+      // If cursor is grabbing, the user is dragging a cube, do NOT scroll
+      if (document.body.style.cursor === 'grabbing') return;
+
+      if (e.touches.length > 0) {
+        const currentY = e.touches[0].clientY;
+        const deltaY = startY - currentY;
+        
+        // Multiply by 1.5 for a natural mobile swipe feel
+        scroll.el.scrollTop += deltaY * 1.5;
+        startY = currentY;
+      }
+    };
+
+    gl.domElement.addEventListener('touchstart', handleTouchStart, { passive: true });
+    gl.domElement.addEventListener('touchmove', handleTouchMove, { passive: true });
+
+    return () => {
+      gl.domElement.removeEventListener('touchstart', handleTouchStart);
+      gl.domElement.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [scroll, gl.domElement]);
+
+  return null;
+}
+
 export default function App() {
   const [isMobile, setIsMobile] = useState(false);
   const [bootComplete, setBootComplete] = useState(false);
@@ -453,6 +497,7 @@ export default function App() {
         <Environment files="/potsdamer_platz_1k.hdr" />
 
         <ScrollControls pages={isMobile ? 10 : 8.2} damping={0.15}>
+          <TouchScroller />
           <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
             <group scale={isMobile ? 0.45 : 1}>
               <CyberCube bootComplete={bootComplete} />
