@@ -360,7 +360,7 @@ export default function App() {
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
       {!bootComplete && <BootSequence onComplete={() => setBootComplete(true)} />}
       <LikeCounter />
-      <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
+      <Canvas camera={{ position: [0, 0, 7], fov: 45 }} style={{ width: '100vw', height: '100vh', display: 'block', position: 'absolute', top: 0, left: 0 }}>
         <color attach="background" args={['#000000']} />
         <ambientLight intensity={0.4} />
         <directionalLight position={[10, 10, 10]} intensity={2} color="#ffffff" />
