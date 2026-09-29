@@ -444,6 +444,7 @@ export default function App() {
                   <li><strong style={{ color: 'white' }}>1st Place</strong> — Byte Battle, Code2Career Club</li>
                   <li><strong style={{ color: 'white' }}>Top 6</strong> — StoxraHack 2026</li>
                   <li><strong style={{ color: 'white' }}>Top 67 Nationwide</strong> — Confluence 2.0 Hackathon</li>
+                  <li><strong style={{ color: 'white' }}>Event Coordinator</strong> — ACM Student Chapter</li>
                 </ul>
               </div>
 
