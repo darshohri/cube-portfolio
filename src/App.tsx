@@ -259,7 +259,7 @@ export default function App() {
         <spotLight position={[0, 10, 0]} intensity={2} color="#888888" penumbra={1} />
         <Environment files="/potsdamer_platz_1k.hdr" />
         
-        <ScrollControls pages={isMobile ? 9.5 : 8.2} damping={0.15}>
+        <ScrollControls pages={isMobile ? 10 : 8.2} damping={0.15}>
           <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
             <group scale={isMobile ? 0.45 : 1}>
               <CyberCube />
