@@ -89,6 +89,53 @@ const GRID_SIZE = 4;
 const SPACING = 0.6;
 const CUBE_SIZE = 0.55;
 
+function CanvasScroller() {
+  const scroll = useScroll();
+  const { gl } = useThree();
+
+  useEffect(() => {
+    if (!scroll || !scroll.el || !gl.domElement) return;
+
+    let startY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        startY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      // If cursor is grabbing, the user is dragging a cube, do NOT scroll
+      if (document.body.style.cursor === 'grabbing') return;
+
+      if (e.touches.length > 0) {
+        const currentY = e.touches[0].clientY;
+        const deltaY = startY - currentY;
+        scroll.el.scrollTop += deltaY * 1.5;
+        startY = currentY;
+      }
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.target === gl.domElement) {
+        scroll.el.scrollTop += e.deltaY;
+      }
+    };
+
+    gl.domElement.addEventListener('touchstart', handleTouchStart, { passive: true });
+    gl.domElement.addEventListener('touchmove', handleTouchMove, { passive: true });
+    gl.domElement.addEventListener('wheel', handleWheel, { passive: true });
+
+    return () => {
+      gl.domElement.removeEventListener('touchstart', handleTouchStart);
+      gl.domElement.removeEventListener('touchmove', handleTouchMove);
+      gl.domElement.removeEventListener('wheel', handleWheel);
+    };
+  }, [scroll, gl.domElement]);
+
+  return null;
+}
+
 function CyberCube({ bootComplete, isMobile }: { bootComplete: boolean; isMobile: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const scroll = useScroll();
@@ -313,7 +360,7 @@ export default function App() {
     <>
       {!bootComplete && <BootSequence onComplete={() => setBootComplete(true)} />}
       <LikeCounter />
-      <Canvas style={{ touchAction: 'pan-y' }} camera={{ position: [0, 0, 7], fov: 45 }}>
+      <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
         <color attach="background" args={['#000000']} />
         <ambientLight intensity={0.4} />
         <directionalLight position={[10, 10, 10]} intensity={2} color="#ffffff" />
@@ -321,7 +368,8 @@ export default function App() {
         <spotLight position={[0, 10, 0]} intensity={2} color="#888888" penumbra={1} />
         <Environment files="/potsdamer_platz_1k.hdr" />
 
-        <ScrollControls style={{ zIndex: 1 }} pages={isMobile ? 10 : 8.2} damping={0.15}>
+        <ScrollControls pages={isMobile ? 10 : 8.2} damping={0.15}>
+          <CanvasScroller />
           <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
             <group scale={isMobile ? 0.45 : 1}>
               <CyberCube bootComplete={bootComplete} isMobile={isMobile} />
