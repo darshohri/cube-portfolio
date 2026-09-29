@@ -285,7 +285,7 @@ export default function App() {
 
             {/* 2. SKILLS SECTION */}
             <div className="scroll-section skills-section">
-              <h2 className="section-title">Full-Stack <br/>& AI Integration.</h2>
+              <h2 className="section-title">Full-Stack <br/>& AI Integration</h2>
               <p style={{ fontSize: '1.2rem', color: '#cbd5e1', lineHeight: 1.6 }}>
                 Bridging the gap between complex data and intuitive user experiences.
                 Specialized in LLM integrations (Gemini, Groq) and modern web architectures.
@@ -301,7 +301,7 @@ export default function App() {
 
             {/* 3. EXPERIENCE SECTION */}
             <div className="scroll-section experience-section">
-              <h2 className="section-title">Professional<br/>Experience.</h2>
+              <h2 className="section-title">Professional<br/>Experience</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: '2rem' }}>
                 <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid #ffffff', borderRadius: '0 1rem 1rem 0' }}>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>LaunchED Global</h3>
@@ -318,7 +318,7 @@ export default function App() {
 
             {/* 4. PROJECTS SECTION 1 */}
             <div className="scroll-section projects-1-section">
-              <h2 className="section-title">Selected<br/>Projects.</h2>
+              <h2 className="section-title">Top<br/>Projects</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem' }}>
                 <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid #ffffff', borderRadius: '1rem 0 0 1rem' }}>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
@@ -326,7 +326,7 @@ export default function App() {
                       FinWise AI ↗
                     </a>
                   </h3>
-                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>AI-powered personal finance platform combining an AI financial mentor, scam & fraud detection, financial goal tracking, interactive market simulations, and gamified financial education.</p>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem', fontWeight: 'bold' }}>AI-powered personal finance platform combining an AI financial mentor, scam & fraud detection, financial goal tracking, interactive market simulations, and gamified financial education.</p>
                   <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • FastAPI • Python • Tailwind CSS • Three.js • Framer Motion • Firebase • Groq • Gemini</p>
                 </div>
                 <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid #ffffff', borderRadius: '1rem 0 0 1rem' }}>
@@ -335,7 +335,7 @@ export default function App() {
                       Ziro ↗
                     </a>
                   </h3>
-                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>Intelligent blockchain payment layer built to make money movement smarter, safer, and more resilient. Combines zero-gas Layer 2 micro-remittances, pre-flight AI scam and address poisoning protection, an offline-first SMS/QR vault engine, and privacy-preserving Zero-Knowledge credit scoring.</p>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem', fontWeight: 'bold' }}>Intelligent blockchain payment layer built to make money movement smarter, safer, and more resilient. Combines zero-gas Layer 2 micro-remittances, pre-flight AI scam and address poisoning protection, an offline-first SMS/QR vault engine, and privacy-preserving Zero-Knowledge credit scoring.</p>
                   <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • TypeScript • FastAPI • Python • Tailwind CSS • Framer Motion • Polygon Amoy</p>
                 </div>
               </div>
@@ -350,7 +350,7 @@ export default function App() {
                       Lumiere ↗
                     </a>
                   </h3>
-                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>AI-powered patient identity resolution platform designed to reconcile duplicate and fragmented healthcare records using intelligent matching and confidence-based resolution.</p>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem', fontWeight: 'bold' }}>AI-powered patient identity resolution platform designed to reconcile duplicate and fragmented healthcare records using intelligent matching and confidence-based resolution.</p>
                   <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • Tailwind CSS • FastAPI • Python • PostgreSQL</p>
                 </div>
                 <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid #ffffff', borderRadius: '0 1rem 1rem 0' }}>
@@ -359,7 +359,7 @@ export default function App() {
                       BYOK (Bring Your Own Key) ↗
                     </a>
                   </h3>
-                  <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>Bring Your Own Key AI chatbot that allows users to securely use their own API keys for personalized AI conversations.</p>
+                  <p style={{ color: '#94a3b8', marginBottom: '1rem', fontWeight: 'bold' }}>Bring Your Own Key AI chatbot that allows users to securely use their own API keys for personalized AI conversations.</p>
                   <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>JavaScript • HTML • CSS • API</p>
                 </div>
               </div>
@@ -367,7 +367,7 @@ export default function App() {
 
             {/* 6. ACHIEVEMENTS SECTION */}
             <div className="scroll-section achievements-section">
-              <h2 className="section-title">Awards &<br/>Recognitions.</h2>
+              <h2 className="section-title">Awards &<br/>Recognitions</h2>
               <ul style={{ listStyleType: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem', color: '#cbd5e1', fontSize: '1.1rem' }}>
                 <li><strong style={{ color: 'white' }}>1st Place</strong> — Plaksha Prayas Tech Hackathon (Future Finance)</li>
                 <li><strong style={{ color: 'white' }}>Winner</strong> — ACM-SIH Ideathon</li>
@@ -379,7 +379,7 @@ export default function App() {
 
             {/* 7. CERTIFICATIONS SECTION */}
             <div className="scroll-section certifications-section">
-              <h2 className="section-title">Certifications &<br/>Virtual Experiences.</h2>
+              <h2 className="section-title">Certifications &<br/>Virtual Experiences</h2>
               <ul style={{ listStyleType: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem', color: '#cbd5e1', fontSize: '1.1rem', marginTop: '2rem' }}>
                 <li><strong style={{ color: 'white' }}>Tata</strong> — GenAI Powered Data Analytics Virtual Experience</li>
                 <li><strong style={{ color: 'white' }}>JPMorgan Chase</strong> — Quantitative Research Virtual Experience</li>
@@ -393,7 +393,7 @@ export default function App() {
 
             {/* 8. CONTACT SECTION */}
             <div className="scroll-section contact-section">
-              <h2 className="contact-title">Let's Connect.</h2>
+              <h2 className="contact-title">Let's Connect</h2>
               <p style={{ fontSize: '1.2rem', color: '#94a3b8', marginBottom: '2rem' }}>Ready to build something extraordinary?</p>
               
               <div className="contact-links">
