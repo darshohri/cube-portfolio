@@ -117,19 +117,19 @@ function CanvasScroller() {
     };
 
     const handleWheel = (e: WheelEvent) => {
-      if (e.target === gl.domElement) {
+      if (scroll && scroll.el) {
         scroll.el.scrollTop += e.deltaY;
       }
     };
 
+    window.addEventListener('wheel', handleWheel, { passive: true });
     gl.domElement.addEventListener('touchstart', handleTouchStart, { passive: true });
     gl.domElement.addEventListener('touchmove', handleTouchMove, { passive: true });
-    gl.domElement.addEventListener('wheel', handleWheel, { passive: true });
 
     return () => {
+      window.removeEventListener('wheel', handleWheel);
       gl.domElement.removeEventListener('touchstart', handleTouchStart);
       gl.domElement.removeEventListener('touchmove', handleTouchMove);
-      gl.domElement.removeEventListener('wheel', handleWheel);
     };
   }, [scroll, gl.domElement]);
 
