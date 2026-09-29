@@ -452,10 +452,10 @@ export default function App() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem' }}>
                   <div style={{ padding: '2rem', background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid #ffffff', borderRadius: '1rem 0 0 1rem' }}>
                     <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
-                      <a href="https://askit-ai.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>AskIt ↗</a>
+                      <a href="https://getfinwise.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>FinWise AI ↗</a>
                     </h3>
-                    <p style={{ color: '#ffffff', marginBottom: '1rem', fontWeight: '500' }}>AI-powered FAQ and Knowledge Base Manager for businesses and creators with Gemini-powered auto-generation, analytics, and embeddable chatbot widget.</p>
-                    <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • TypeScript • Tailwind CSS • Firebase • Gemini API • Framer Motion</p>
+                    <p style={{ color: '#ffffff', marginBottom: '1rem', fontWeight: '500' }}>AI-powered personal finance platform combining an AI financial mentor, scam & fraud detection, financial goal tracking, interactive market simulations, and gamified financial education.</p>
+                    <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • FastAPI • Python • Tailwind CSS • Three.js • Framer Motion • Firebase • Groq • Gemini</p>
                   </div>
                   <div style={{ padding: '2rem', background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid #ffffff', borderRadius: '1rem 0 0 1rem' }}>
                     <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
