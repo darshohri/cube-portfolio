@@ -91,13 +91,30 @@ const CUBE_SIZE = 0.55;
 
 function CanvasScroller() {
   const scroll = useScroll();
-  const { gl } = useThree();
 
   useEffect(() => {
-    if (!scroll || !scroll.el || !gl.domElement) return;
+    (window as any).__scroll = scroll;
+  }, [scroll]);
+
+  useEffect(() => {
+    if (!scroll || !scroll.el) return;
+
+    let firstRun = true;
+    const onScroll = () => {
+      if (firstRun) return;
+      const scrollThreshold = scroll.el.scrollHeight - scroll.el.clientHeight;
+      if (scrollThreshold > 0) {
+        (scroll as any).scroll.current = scroll.el.scrollTop / scrollThreshold;
+      }
+    };
+
+    requestAnimationFrame(() => {
+      firstRun = false;
+    });
+
+    scroll.el.addEventListener('scroll', onScroll, { passive: true });
 
     let startY = 0;
-
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length > 0) {
         startY = e.touches[0].clientY;
@@ -105,9 +122,7 @@ function CanvasScroller() {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      // If cursor is grabbing, the user is dragging a cube, do NOT scroll
       if (document.body.style.cursor === 'grabbing') return;
-
       if (e.touches.length > 0) {
         const currentY = e.touches[0].clientY;
         const deltaY = startY - currentY;
@@ -118,20 +133,23 @@ function CanvasScroller() {
 
     const handleWheel = (e: WheelEvent) => {
       if (scroll && scroll.el) {
-        scroll.el.scrollTop += e.deltaY;
+        if (e.target !== scroll.el && !scroll.el.contains(e.target as Node)) {
+          scroll.el.scrollTop += e.deltaY;
+        }
       }
     };
 
     window.addEventListener('wheel', handleWheel, { passive: true });
-    gl.domElement.addEventListener('touchstart', handleTouchStart, { passive: true });
-    gl.domElement.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     return () => {
+      scroll.el.removeEventListener('scroll', onScroll);
       window.removeEventListener('wheel', handleWheel);
-      gl.domElement.removeEventListener('touchstart', handleTouchStart);
-      gl.domElement.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
     };
-  }, [scroll, gl.domElement]);
+  }, [scroll]);
 
   return null;
 }
