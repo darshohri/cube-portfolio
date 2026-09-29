@@ -257,8 +257,7 @@ export default function App() {
         <directionalLight position={[10, 10, 10]} intensity={2} color="#ffffff" />
         <pointLight position={[-10, -10, -10]} intensity={5} color="#ffffff" />
         <spotLight position={[0, 10, 0]} intensity={2} color="#888888" penumbra={1} />
-        
-        <Environment preset="city" />
+        <Environment files="/potsdamer_platz_1k.hdr" />
         
         <ScrollControls pages={8} damping={0.15}>
           <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
