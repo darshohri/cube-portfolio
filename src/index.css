@@ -633,5 +633,7 @@ body.light {
 }
 .html-fade-in.visible {
   opacity: 1;
+}
+.html-fade-in a {
   pointer-events: auto;
 }

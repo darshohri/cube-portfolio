@@ -287,6 +287,13 @@ function CyberCube({ bootComplete }: { bootComplete: boolean }) {
               }
             }
           }}
+          onPointerCancel={(e) => {
+            if (draggedCubeIndex === i) {
+              e.stopPropagation();
+              setDraggedCubeIndex(null);
+              document.body.style.cursor = 'auto';
+            }
+          }}
         >
           <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
           <meshPhysicalMaterial
