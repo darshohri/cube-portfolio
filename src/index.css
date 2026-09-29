@@ -617,11 +617,6 @@ body.light {
 
 
 
-@keyframes removeBlocker {
-  0% { z-index: 99999; }
-  99% { z-index: 99999; }
-  100% { z-index: -1; display: none; }
-}
 .scroll-blocker {
   position: absolute;
   top: 0;
@@ -629,14 +624,14 @@ body.light {
   width: 100%;
   height: 100%;
   z-index: 99999;
-  animation: removeBlocker 4s forwards;
-}
-@keyframes fadeInHtml {
-  0% { opacity: 0; pointer-events: none; }
-  80% { opacity: 0; pointer-events: none; }
-  100% { opacity: 1; pointer-events: auto; }
 }
 .html-fade-in {
   width: 100vw;
-  animation: fadeInHtml 5s ease-in forwards;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease-in;
+}
+.html-fade-in.visible {
+  opacity: 1;
+  pointer-events: auto;
 }

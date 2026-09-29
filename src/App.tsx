@@ -119,7 +119,7 @@ const GRID_SIZE = 4;
 const SPACING = 0.6;
 const CUBE_SIZE = 0.55;
 
-function CyberCube() {
+function CyberCube({ bootComplete }: { bootComplete: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const scroll = useScroll();
   const [draggedCubeIndex, setDraggedCubeIndex] = useState<number | null>(null);
@@ -166,12 +166,21 @@ function CyberCube() {
   // Pre-allocate quaternions to avoid garbage collection overhead in useFrame
   const identityQuat = useMemo(() => new THREE.Quaternion(), []);
   const spinningQuat = useMemo(() => new THREE.Quaternion(), []);
+  const startTimeRef = useRef<number | null>(null);
 
   useFrame((state) => {
     if (!groupRef.current || !scroll) return;
 
+    if (!bootComplete) {
+      startTimeRef.current = state.clock.elapsedTime;
+    }
+
+    const elapsedSinceBoot = bootComplete
+      ? state.clock.elapsedTime - (startTimeRef.current || 0)
+      : 0;
+
     // Intro animation progress (0 to 1 over 4 seconds)
-    const rawProgress = state.clock.elapsedTime / 4.0;
+    const rawProgress = elapsedSinceBoot / 4.0;
     const isIntro = rawProgress < 1;
     const easedProgress = 1 - Math.pow(1 - Math.min(rawProgress, 1), 3); // Cubic ease out
 
@@ -301,7 +310,7 @@ function CyberCube() {
   );
 }
 
-function BootSequence() {
+function BootSequence({ onComplete }: { onComplete: () => void }) {
   const [lines, setLines] = useState<string[]>([]);
   const [visible, setVisible] = useState(true);
   const [cursorVisible, setCursorVisible] = useState(true);
@@ -325,6 +334,9 @@ function BootSequence() {
       await new Promise(r => setTimeout(r, 600));
       if (isCancelled) return;
       setVisible(false);
+      setTimeout(() => {
+        if (!isCancelled) onComplete();
+      }, 500); // Trigger complete before full fade out to start cube animation slightly earlier
     };
     runSequence();
     
@@ -361,13 +373,13 @@ function BootSequence() {
       <div style={{ maxWidth: '600px', width: '100%' }}>
         {lines.map((line, i) => (
           <div key={i} style={{ marginBottom: '1rem' }}>
-            <span style={{ color: '#22c55e', marginRight: '0.8rem' }}>&gt;</span>
+            <span style={{ color: '#ffffff', marginRight: '0.8rem' }}>&gt;</span>
             {line}
           </div>
         ))}
         {visible && lines.length < sequence.length && (
           <div style={{ marginTop: '1rem' }}>
-            <span style={{ color: '#22c55e', marginRight: '0.8rem' }}>&gt;</span>
+            <span style={{ color: '#ffffff', marginRight: '0.8rem' }}>&gt;</span>
             <span style={{ opacity: cursorVisible ? 1 : 0 }}>█</span>
           </div>
         )}
@@ -378,6 +390,15 @@ function BootSequence() {
 
 export default function App() {
   const [isMobile, setIsMobile] = useState(false);
+  const [bootComplete, setBootComplete] = useState(false);
+  const [introComplete, setIntroComplete] = useState(false);
+
+  useEffect(() => {
+    if (bootComplete) {
+      const timer = setTimeout(() => setIntroComplete(true), 4000); // 4 seconds for cube animation
+      return () => clearTimeout(timer);
+    }
+  }, [bootComplete]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -391,9 +412,9 @@ export default function App() {
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
-      <BootSequence />
+      {!bootComplete && <BootSequence onComplete={() => setBootComplete(true)} />}
       {/* Scroll Blocker Overlay: prevents desync by intercepting wheel/touch events before they hit ScrollControls during the 4-second intro */}
-      <div className="scroll-blocker" />
+      {!introComplete && <div className="scroll-blocker" />}
 
       <LikeCounter />
       <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
@@ -408,14 +429,14 @@ export default function App() {
         <ScrollControls pages={isMobile ? 10 : 8.2} damping={0.15}>
           <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
             <group scale={isMobile ? 0.45 : 1}>
-              <CyberCube />
+              <CyberCube bootComplete={bootComplete} />
             </group>
           </Float>
 
           <ContactShadows position={[0, -3.5, 0]} opacity={0.4} scale={20} blur={2} far={10} color="#ffffff" />
 
           <Scroll html style={{ width: '100vw' }}>
-            <div className="html-fade-in">
+            <div className={`html-fade-in ${introComplete ? 'visible' : ''}`}>
               {/* 1. HERO SECTION */}
               <div className="scroll-section hero-section">
                 <h1 className="hero-title">
