@@ -2,6 +2,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ScrollControls, Scroll, useScroll, Environment, Float, Edges, ContactShadows } from '@react-three/drei';
 import { useRef, useMemo, useState, useEffect } from 'react';
 import * as THREE from 'three';
+import { CustomCursor } from './CustomCursor';
 
 function LikeCounter() {
   const [likes, setLikes] = useState<number | null>(null);
@@ -88,13 +89,9 @@ function LikeCounter() {
         transition: 'opacity 1s ease-in-out, transform 0.2s, background 0.2s',
         boxShadow: hasLiked ? '0 0 15px rgba(255,255,255,0.2)' : '0 4px 12px rgba(0,0,0,0.5)',
         opacity: visible ? 1 : 0,
-        pointerEvents: visible ? (hasLiked ? 'auto' : 'auto') : 'none',
+        pointerEvents: visible ? 'auto' : 'none',
       }}
       onClick={handleLike}
-      onPointerDown={(e) => {
-        // Prevent touch from firing hover/click emulation that swallows events on mobile
-        handleLike();
-      }}
       onMouseEnter={(e) => {
         if (hasLiked) return;
         e.currentTarget.style.transform = 'scale(1.05)';
@@ -119,7 +116,7 @@ const GRID_SIZE = 4;
 const SPACING = 0.6;
 const CUBE_SIZE = 0.55;
 
-function CyberCube({ bootComplete }: { bootComplete: boolean }) {
+function CyberCube({ bootComplete, isMobile }: { bootComplete: boolean; isMobile: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const scroll = useScroll();
   const [draggedCubeIndex, setDraggedCubeIndex] = useState<number | null>(null);
@@ -216,7 +213,7 @@ function CyberCube({ bootComplete }: { bootComplete: boolean }) {
         // Randomly spin while assembling, then settle to identity quaternion
         spinningQuat.setFromAxisAngle(cubeData.randomAxis, cubeData.spinPhase * (1 - easedProgress) * 5);
         child.quaternion.slerpQuaternions(spinningQuat, identityQuat, easedProgress);
-      } else if (draggedCubeIndex === i && offset < 0.01) {
+      } else if (!isMobile && draggedCubeIndex === i && offset < 0.01) {
         const vec = new THREE.Vector3(state.pointer.x, state.pointer.y, 0.5);
         vec.unproject(state.camera);
         const dir = vec.sub(state.camera.position).normalize();
@@ -254,20 +251,21 @@ function CyberCube({ bootComplete }: { bootComplete: boolean }) {
       {cubes.map((cube, i) => (
         <mesh
           key={i}
-          onPointerOver={(e) => {
+          // Only attach pointer events on desktop — mobile cubes are non-interactive
+          onPointerOver={isMobile ? undefined : (e) => {
             if (scroll.offset < 0.01) {
               e.stopPropagation();
               setHoveredCubeIndex(i);
               if (draggedCubeIndex === null) document.body.style.cursor = 'grab';
             }
           }}
-          onPointerOut={(e) => {
+          onPointerOut={isMobile ? undefined : (e) => {
             if (hoveredCubeIndex === i) {
               setHoveredCubeIndex(null);
               if (draggedCubeIndex === null) document.body.style.cursor = 'auto';
             }
           }}
-          onPointerDown={(e) => {
+          onPointerDown={isMobile ? undefined : (e) => {
             if (scroll.offset < 0.01) {
               e.stopPropagation();
               setDraggedCubeIndex(i);
@@ -277,7 +275,7 @@ function CyberCube({ bootComplete }: { bootComplete: boolean }) {
               }
             }
           }}
-          onPointerUp={(e) => {
+          onPointerUp={isMobile ? undefined : (e) => {
             if (draggedCubeIndex === i) {
               e.stopPropagation();
               setDraggedCubeIndex(null);
@@ -287,7 +285,7 @@ function CyberCube({ bootComplete }: { bootComplete: boolean }) {
               }
             }
           }}
-          onPointerCancel={(e) => {
+          onPointerCancel={isMobile ? undefined : (e) => {
             if (draggedCubeIndex === i) {
               e.stopPropagation();
               setDraggedCubeIndex(null);
@@ -318,6 +316,7 @@ function CyberCube({ bootComplete }: { bootComplete: boolean }) {
 }
 
 function BootSequence({ onComplete }: { onComplete: () => void }) {
+  const [visibleLines, setVisibleLines] = useState<number>(0);
   const [visible, setVisible] = useState(true);
   const [cursorVisible, setCursorVisible] = useState(true);
 
@@ -333,12 +332,19 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
     let isCancelled = false;
     
     const runSequence = async () => {
-      await new Promise(r => setTimeout(r, 1500)); // Just show it for a short time
+      // Show each line one by one quickly
+      for (let i = 0; i < sequence.length; i++) {
+        await new Promise(r => setTimeout(r, 100)); // 100ms per line
+        if (isCancelled) return;
+        setVisibleLines(i + 1);
+      }
+      
+      await new Promise(r => setTimeout(r, 300)); // Short pause after all lines are visible
       if (isCancelled) return;
       setVisible(false);
       setTimeout(() => {
         if (!isCancelled) onComplete();
-      }, 500); // Trigger complete before full fade out to start cube animation slightly earlier
+      }, 200); // Trigger complete before full fade out
     };
     
     runSequence();
@@ -374,7 +380,7 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
       fontSize: 'clamp(0.9rem, 3.5vw, 1.5rem)',
     }}>
       <div style={{ maxWidth: '600px', width: '100%' }}>
-        {sequence.map((line, i) => (
+        {sequence.slice(0, visibleLines).map((line, i) => (
           <div key={i} style={{ marginBottom: '1rem' }}>
             <span style={{ color: '#ffffff', marginRight: '0.8rem' }}>&gt;</span>
             {line}
@@ -391,55 +397,47 @@ function BootSequence({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-function CanvasScroller() {
-  const scroll = useScroll();
-  const { gl } = useThree();
-
-  useEffect(() => {
-    if (!scroll || !scroll.el || !gl.domElement) return;
-
-    let startY = 0;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.target !== gl.domElement) return;
-      if (e.touches.length > 0) {
-        startY = e.touches[0].clientY;
-      }
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.target !== gl.domElement) return;
-      
-      // If cursor is grabbing, the user is dragging a cube, do NOT scroll
-      if (document.body.style.cursor === 'grabbing') return;
-
-      if (e.touches.length > 0) {
-        const currentY = e.touches[0].clientY;
-        const deltaY = startY - currentY;
-        
-        // Multiply by 1.5 for a natural mobile swipe feel
-        scroll.el.scrollTop += deltaY * 1.5;
-        startY = currentY;
-      }
-    };
-
-    const handleWheel = (e: WheelEvent) => {
-      if (e.target !== gl.domElement) return;
-      scroll.el.scrollTop += e.deltaY;
-    };
-
-    gl.domElement.addEventListener('touchstart', handleTouchStart, { passive: true });
-    gl.domElement.addEventListener('touchmove', handleTouchMove, { passive: true });
-    gl.domElement.addEventListener('wheel', handleWheel, { passive: true });
-
-    return () => {
-      gl.domElement.removeEventListener('touchstart', handleTouchStart);
-      gl.domElement.removeEventListener('touchmove', handleTouchMove);
-      gl.domElement.removeEventListener('wheel', handleWheel);
-    };
-  }, [scroll, gl.domElement]);
-
-  return null;
+function SkillTooltip({ skill, tooltip }: { skill: string, tooltip: string }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <div 
+      style={{ position: 'relative', display: 'inline-block' }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      <span style={{ 
+        padding: '0.5rem 1.5rem', 
+        background: hover ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)', 
+        border: '1px solid rgba(255, 255, 255, 0.3)', 
+        borderRadius: '2rem', 
+        fontSize: '0.9rem',
+        cursor: 'default',
+        transition: 'background 0.2s',
+        display: 'inline-block'
+      }}>
+        {skill}
+      </span>
+      <div style={{
+        position: 'absolute',
+        bottom: '120%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: 'rgba(0, 0, 0, 0.9)',
+        color: '#fff',
+        padding: '0.5rem 1rem',
+        borderRadius: '0.5rem',
+        fontSize: '0.8rem',
+        whiteSpace: 'nowrap',
+        opacity: hover ? 1 : 0,
+        pointerEvents: 'none',
+        transition: 'opacity 0.2s',
+        zIndex: 1000,
+        border: '1px solid rgba(255, 255, 255, 0.2)'
+      }}>
+        {tooltip}
+      </div>
+    </div>
+  );
 }
 
 export default function App() {
@@ -465,13 +463,14 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
+    <>
       {!bootComplete && <BootSequence onComplete={() => setBootComplete(true)} />}
-      {/* Scroll Blocker Overlay: prevents desync by intercepting wheel/touch events before they hit ScrollControls during the 4-second intro */}
-      {!introComplete && <div className="scroll-blocker" />}
-
+      <CustomCursor />
       <LikeCounter />
-      <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
+      <Canvas
+        style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh' }}
+        camera={{ position: [0, 0, 7], fov: 45 }}
+      >
         <color attach="background" args={['#000000']} />
 
         <ambientLight intensity={0.4} />
@@ -481,10 +480,9 @@ export default function App() {
         <Environment files="/potsdamer_platz_1k.hdr" />
 
         <ScrollControls pages={isMobile ? 10 : 8.2} damping={0.15}>
-          <CanvasScroller />
           <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
             <group scale={isMobile ? 0.45 : 1}>
-              <CyberCube bootComplete={bootComplete} />
+              <CyberCube bootComplete={bootComplete} isMobile={isMobile} />
             </group>
           </Float>
 
@@ -513,10 +511,19 @@ export default function App() {
                   Specialized in LLM integrations (Gemini, Groq) and modern web architectures.
                 </p>
                 <div className="flex-container" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.8rem', marginTop: '2rem', flexWrap: 'wrap' }}>
-                  {['React', 'Next.js', 'TypeScript', 'FastAPI', 'Python', 'Tailwind CSS', 'Three.js', 'Firebase', 'PostgreSQL', 'Gemini API'].map(skill => (
-                    <span key={skill} style={{ padding: '0.5rem 1.5rem', background: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255, 255, 255, 0.3)', borderRadius: '2rem', fontSize: '0.9rem' }}>
-                      {skill}
-                    </span>
+                  {[
+                    { name: 'React', tooltip: 'Frontend UI component library' },
+                    { name: 'Next.js', tooltip: 'React framework for production' },
+                    { name: 'TypeScript', tooltip: 'Strongly typed JavaScript' },
+                    { name: 'FastAPI', tooltip: 'High performance Python web framework' },
+                    { name: 'Python', tooltip: 'Backend & AI integrations' },
+                    { name: 'Tailwind CSS', tooltip: 'Utility-first styling' },
+                    { name: 'Three.js', tooltip: '3D graphics in the browser' },
+                    { name: 'Firebase', tooltip: 'Backend-as-a-service' },
+                    { name: 'PostgreSQL', tooltip: 'Relational database' },
+                    { name: 'Gemini API', tooltip: 'Google AI models integration' }
+                  ].map(skill => (
+                    <SkillTooltip key={skill.name} skill={skill.name} tooltip={skill.tooltip} />
                   ))}
                 </div>
               </div>
@@ -544,12 +551,12 @@ export default function App() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem' }}>
                   <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid #ffffff', borderRadius: '1rem 0 0 1rem' }}>
                     <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
-                      <a href="https://getfinwise.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
-                        FinWise AI ↗
+                      <a href="https://askit-ai.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
+                        AskIt ↗
                       </a>
                     </h3>
-                    <p style={{ color: '#ffffff', marginBottom: '1rem', fontWeight: '500' }}>AI-powered personal finance platform combining an AI financial mentor, scam & fraud detection, financial goal tracking, interactive market simulations, and gamified financial education.</p>
-                    <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • FastAPI • Python • Tailwind CSS • Three.js • Framer Motion • Firebase • Groq • Gemini</p>
+                    <p style={{ color: '#ffffff', marginBottom: '1rem', fontWeight: '500' }}>AI-powered FAQ and Knowledge Base Manager for businesses and creators with Gemini-powered auto-generation, analytics, and embeddable chatbot widget.</p>
+                    <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • TypeScript • Tailwind CSS • Firebase • Gemini API • Framer Motion</p>
                   </div>
                   <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid #ffffff', borderRadius: '1rem 0 0 1rem' }}>
                     <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
@@ -637,6 +644,6 @@ export default function App() {
           </Scroll>
         </ScrollControls>
       </Canvas>
-    </div>
+    </>
   );
 }
