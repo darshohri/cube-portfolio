@@ -301,6 +301,81 @@ function CyberCube() {
   );
 }
 
+function BootSequence() {
+  const [lines, setLines] = useState<string[]>([]);
+  const [visible, setVisible] = useState(true);
+  const [cursorVisible, setCursorVisible] = useState(true);
+
+  const sequence = [
+    "INITIALIZING KERNEL...",
+    "LOADING NEURAL INTERFACE...",
+    "ESTABLISHING SECURE CONNECTION...",
+    "RENDERING 3D ENVIRONMENT...",
+    "SYSTEM ONLINE."
+  ];
+
+  useEffect(() => {
+    let isCancelled = false;
+    const runSequence = async () => {
+      for (let i = 0; i < sequence.length; i++) {
+        await new Promise(r => setTimeout(r, 400 + Math.random() * 300));
+        if (isCancelled) return;
+        setLines(prev => [...prev, sequence[i]]);
+      }
+      await new Promise(r => setTimeout(r, 600));
+      if (isCancelled) return;
+      setVisible(false);
+    };
+    runSequence();
+    
+    const cursorInterval = setInterval(() => setCursorVisible(v => !v), 500);
+    
+    return () => {
+      isCancelled = true;
+      clearInterval(cursorInterval);
+    };
+  }, []);
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: '#000000',
+      zIndex: 99999,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      padding: '2rem',
+      boxSizing: 'border-box',
+      opacity: visible ? 1 : 0,
+      transition: 'opacity 0.8s ease-out',
+      pointerEvents: visible ? 'all' : 'none',
+      fontFamily: 'monospace',
+      color: '#e2e8f0',
+      fontSize: 'clamp(1rem, 4vw, 1.5rem)',
+    }}>
+      <div style={{ maxWidth: '600px', width: '100%' }}>
+        {lines.map((line, i) => (
+          <div key={i} style={{ marginBottom: '1rem' }}>
+            <span style={{ color: '#22c55e', marginRight: '0.8rem' }}>&gt;</span>
+            {line}
+          </div>
+        ))}
+        {visible && lines.length < sequence.length && (
+          <div style={{ marginTop: '1rem' }}>
+            <span style={{ color: '#22c55e', marginRight: '0.8rem' }}>&gt;</span>
+            <span style={{ opacity: cursorVisible ? 1 : 0 }}>█</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -316,6 +391,7 @@ export default function App() {
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#000000', zIndex: 9999 }}>
+      <BootSequence />
       {/* Scroll Blocker Overlay: prevents desync by intercepting wheel/touch events before they hit ScrollControls during the 4-second intro */}
       <div className="scroll-blocker" />
 
