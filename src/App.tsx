@@ -303,14 +303,14 @@ export default function App() {
             <div className="scroll-section experience-section">
               <h2 className="section-title">Professional<br/>Experience.</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: '2rem' }}>
-                <div style={{ paddingLeft: '1.5rem', borderLeft: '2px solid #ffffff' }}>
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: '600' }}>LaunchED Global</h3>
-                  <p style={{ color: '#ffffff', fontSize: '1rem', marginBottom: '0.5rem' }}>Web Development Intern | May - Jul 2026</p>
+                <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid #ffffff', borderRadius: '0 1rem 1rem 0' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>LaunchED Global</h3>
+                  <p style={{ color: '#ffffff', fontSize: '1rem', marginBottom: '1rem' }}>Web Development Intern | May - Jul 2026</p>
                   <p style={{ color: '#94a3b8', lineHeight: 1.5 }}>Architected responsive, mobile-first web pages, reducing cross-device rendering inconsistencies by 25%. Refactored legacy components into modular UI patterns following clean-code practices.</p>
                 </div>
-                <div style={{ paddingLeft: '1.5rem', borderLeft: '2px solid rgba(255,255,255,0.2)' }}>
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: '600' }}>MAG Insights</h3>
-                  <p style={{ color: '#94a3b8', fontSize: '1rem', marginBottom: '0.5rem' }}>Social Media & Marketing Intern | Jan - Mar 2026</p>
+                <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid #ffffff', borderRadius: '0 1rem 1rem 0' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>MAG Insights</h3>
+                  <p style={{ color: '#ffffff', fontSize: '1rem', marginBottom: '1rem' }}>Social Media & Marketing Intern | Jan - Mar 2026</p>
                   <p style={{ color: '#94a3b8', lineHeight: 1.5 }}>Directed short-form video commercials, accelerating content pipeline throughput by 40% and increasing organic audience engagement by 35%.</p>
                 </div>
               </div>
@@ -329,7 +329,7 @@ export default function App() {
                   <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>AI-powered personal finance platform combining an AI financial mentor, scam & fraud detection, financial goal tracking, interactive market simulations, and gamified financial education.</p>
                   <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • FastAPI • Python • Tailwind CSS • Three.js • Framer Motion • Firebase • Groq • Gemini</p>
                 </div>
-                <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid rgba(255, 255, 255, 0.4)', borderRadius: '1rem 0 0 1rem' }}>
+                <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderRight: '4px solid #ffffff', borderRadius: '1rem 0 0 1rem' }}>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
                     <a href="https://zir0.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
                       Ziro ↗
@@ -353,7 +353,7 @@ export default function App() {
                   <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>AI-powered patient identity resolution platform designed to reconcile duplicate and fragmented healthcare records using intelligent matching and confidence-based resolution.</p>
                   <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • Tailwind CSS • FastAPI • Python • PostgreSQL</p>
                 </div>
-                <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid rgba(255, 255, 255, 0.4)', borderRadius: '0 1rem 1rem 0' }}>
+                <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid #ffffff', borderRadius: '0 1rem 1rem 0' }}>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
                     <a href="https://byok-ai.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
                       BYOK (Bring Your Own Key) ↗
