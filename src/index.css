@@ -186,6 +186,10 @@
 html {
   background-color: #000000;
   color: #f4f4f5;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   transition: background-color 650ms cubic-bezier(0.16, 1, 0.3, 1), color 650ms cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -200,16 +204,21 @@ body {
   color: #f4f4f5;
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
-  width: 100vw;
-  height: 100vh;
   transition: background-color 650ms cubic-bezier(0.16, 1, 0.3, 1), color 650ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #root {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
+}
+
+@keyframes fadeInLine {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* LIGHT MOOD CONFIGS & COMPREHENSIVE OVERRIDES */
