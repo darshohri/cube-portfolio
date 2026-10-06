@@ -407,7 +407,7 @@ export default function App() {
               {/* 2. SKILLS SECTION */}
               <div className="scroll-section skills-section">
                 <h2 className="section-title">Full-Stack <br />& AI Integration</h2>
-                <p style={{ fontSize: '1.2rem', color: '#cbd5e1', lineHeight: 1.6 }}>
+                <p style={{ fontSize: '1.2rem', color: '#cbd5e1', lineHeight: 1.6, textShadow: '0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.9)' }}>
                   Bridging the gap between complex data and intuitive user experiences.
                   Specialized in LLM integrations (Gemini, Groq) and modern web architectures.
                 </p>
@@ -496,7 +496,7 @@ export default function App() {
                   <li><strong style={{ color: 'white' }}>1st Place</strong> — Byte Battle, Code2Career Club</li>
                   <li><strong style={{ color: 'white' }}>Top 67 Nationwide</strong> — Confluence 2.0 Hackathon</li>
                   <li><strong style={{ color: 'white' }}>Finalist</strong> — StoxraHack 2026</li>
-                  <li><strong style={{ color: 'white' }}>Vice President</strong> — Cultural Club</li>
+                  <li><strong style={{ color: 'white' }}>Cultural Club Vice President</strong> — NMIMS Chandigarh</li>
                   <li><strong style={{ color: 'white' }}>ACM Core Member</strong> — NMIMS Chandigarh</li>
                 </ul>
               </div>
