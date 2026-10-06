@@ -494,9 +494,10 @@ export default function App() {
                   <li><strong style={{ color: 'white' }}>1st Place</strong> — Plaksha Prayas Tech Hackathon (Future Finance)</li>
                   <li><strong style={{ color: 'white' }}>Winner</strong> — ACM-SIH Ideathon</li>
                   <li><strong style={{ color: 'white' }}>1st Place</strong> — Byte Battle, Code2Career Club</li>
-                  <li><strong style={{ color: 'white' }}>Top 6</strong> — StoxraHack 2026</li>
                   <li><strong style={{ color: 'white' }}>Top 67 Nationwide</strong> — Confluence 2.0 Hackathon</li>
-                  <li><strong style={{ color: 'white' }}>Event Coordinator</strong> — ACM Student Chapter</li>
+                  <li><strong style={{ color: 'white' }}>Finalist</strong> — StoxraHack 2026</li>
+                  <li><strong style={{ color: 'white' }}>Vice President</strong> — Cultural Club</li>
+                  <li><strong style={{ color: 'white' }}>ACM Core Member</strong> — NMIMS Chandigarh</li>
                 </ul>
               </div>
 
@@ -507,10 +508,9 @@ export default function App() {
                   <li><strong style={{ color: 'white' }}>Tata</strong> — GenAI Powered Data Analytics Virtual Experience</li>
                   <li><strong style={{ color: 'white' }}>JPMorgan Chase</strong> — Quantitative Research Virtual Experience</li>
                   <li><strong style={{ color: 'white' }}>Deloitte</strong> — Technology Consulting Virtual Experience</li>
-                  <li><strong style={{ color: 'white' }}>BCG</strong> — GenAI Virtual Experience</li>
-                  <li><strong style={{ color: 'white' }}>Google</strong> — Solution Challenge 2026</li>
-                  <li><strong style={{ color: 'white' }}>StoxraHack 2026</strong> — Finalist Certificate</li>
                   <li><strong style={{ color: 'white' }}>Vanderbilt University</strong> — Prompt Engineering for ChatGPT</li>
+                  <li><strong style={{ color: 'white' }}>AWS</strong> — Generative AI with Large Language Models</li>
+                  <li><strong style={{ color: 'white' }}>Google</strong> — Solution Challenge 2026</li>
                 </ul>
               </div>
 
@@ -527,8 +527,8 @@ export default function App() {
                   <span style={{ color: '#475569' }}>|</span>
                   <a href="https://leetcode.com/u/darshohri" target="_blank" rel="noopener noreferrer" style={{ color: '#ffffff', textDecoration: 'none', fontSize: '1.1rem' }}>LeetCode</a>
                 </div>
-                <a href="/Darsh_Ohri_Resume.pdf" download="Darsh_Ohri_Resume.pdf" style={{ display: 'inline-block', padding: '1rem 3rem', fontSize: '1.1rem', fontWeight: '600', background: 'white', color: '#000000', textDecoration: 'none', borderRadius: '3rem', cursor: 'pointer', transition: 'transform 0.2s' }}>
-                  Download Resume
+                <a href="/Darsh_Ohri_Resume.pdf" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '1rem 3rem', fontSize: '1.1rem', fontWeight: '600', background: 'white', color: '#000000', textDecoration: 'none', borderRadius: '3rem', cursor: 'pointer', transition: 'transform 0.2s' }}>
+                  View Resume
                 </a>
               </div>
             </div>
