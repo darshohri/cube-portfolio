@@ -259,7 +259,7 @@ function CyberCube({ bootComplete, isMobile }: { bootComplete: boolean; isMobile
           onPointerCancel={isMobile ? undefined : () => { setDraggedCubeIndex(null); document.body.style.cursor = 'auto'; }}
         >
           <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
-          <meshPhysicalMaterial color="#444444" metalness={0.9} roughness={0.2} transparent opacity={0.7} transmission={0.9} thickness={1.5} envMapIntensity={2.3} />
+          <meshPhysicalMaterial color="#444444" metalness={0.9} roughness={0.2} transparent opacity={0.7} transmission={0.9} thickness={1.5} envMapIntensity={1.9} />
           <Edges linewidth={2} threshold={15} color="#d4d4d4" />
         </mesh>
       ))}
@@ -422,7 +422,7 @@ export default function App() {
                     { name: 'Three.js', tooltip: '3D graphics in the browser' },
                     { name: 'Firebase', tooltip: 'Backend-as-a-service' },
                     { name: 'PostgreSQL', tooltip: 'Relational database' },
-                    { name: 'Gemini API', tooltip: 'Google AI models integration' }
+                    { name: 'API', tooltip: 'Google AI models integration' }
                   ].map(skill => (
                     <SkillTooltip key={skill.name} skill={skill.name} tooltip={skill.tooltip} />
                   ))}
