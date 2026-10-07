@@ -508,6 +508,7 @@ export default function App() {
                   <li><strong style={{ color: 'white' }}>Tata</strong> — GenAI Powered Data Analytics Virtual Experience</li>
                   <li><strong style={{ color: 'white' }}>JPMorgan Chase</strong> — Quantitative Research Virtual Experience</li>
                   <li><strong style={{ color: 'white' }}>Deloitte</strong> — Technology Consulting Virtual Experience</li>
+                  <li><strong style={{ color: 'white' }}>BCG</strong> — GenAI Virtual Experience</li>
                   <li><strong style={{ color: 'white' }}>Vanderbilt University</strong> — Prompt Engineering for ChatGPT</li>
                   <li><strong style={{ color: 'white' }}>AWS</strong> — Generative AI with Large Language Models</li>
                   <li><strong style={{ color: 'white' }}>Google</strong> — Solution Challenge 2026</li>
