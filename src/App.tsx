@@ -492,9 +492,9 @@ export default function App() {
                 <h2 className="section-title">Awards &<br />Recognitions</h2>
                 <ul style={{ listStyleType: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem', color: '#cbd5e1', fontSize: '1.1rem' }}>
                   <li><strong style={{ color: 'white' }}>1st Place</strong> — Plaksha Prayas Tech Hackathon (Future Finance)</li>
-                  <li><strong style={{ color: 'white' }}>1st Place</strong> — AIdeathon | Entrepreneurship Club</li>
                   <li><strong style={{ color: 'white' }}>Winner</strong> — ACM-SIH Ideathon</li>
                   <li><strong style={{ color: 'white' }}>1st Place</strong> — Byte Battle | Code2Career Club</li>
+                  <li><strong style={{ color: 'white' }}>1st Place</strong> — AIdeathon | Entrepreneurship Club</li>
                   <li><strong style={{ color: 'white' }}>Top 67 Nationwide</strong> — Confluence 2.0 Hackathon</li>
                   <li><strong style={{ color: 'white' }}>Finalist</strong> — StoxraHack 2026</li>
                   <li><strong style={{ color: 'white' }}>Cultural Club Vice President</strong> — NMIMS Chandigarh</li>
