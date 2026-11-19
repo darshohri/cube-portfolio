@@ -461,7 +461,7 @@ export default function App() {
                     <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
                       <a href="https://zir0.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>Ziro ↗</a>
                     </h3>
-                    <p style={{ color: '#ffffff', marginBottom: '1rem', fontWeight: '500' }}>Intelligent blockchain payment layer built to make money movement smarter, safer, and more resilient. Combines zero-gas Layer 2 micro-remittances, pre-flight AI scam and address poisoning protection, an offline-first SMS/QR vault engine, and privacy-preserving Zero-Knowledge credit scoring.</p>
+                    <p style={{ color: '#ffffff', marginBottom: '1rem', fontWeight: '500' }}>Smart blockchain payments platform that makes sending money free, safe, and accessible anywhere. Features zero-fee Layer-2 transfers, real-time AI protection to catch scam addresses before sending, offline SMS and QR payments without internet, and private Zero-Knowledge credit scoring.</p>
                     <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • TypeScript • FastAPI • Python • Tailwind CSS • Framer Motion • Polygon Amoy</p>
                   </div>
                 </div>
@@ -474,7 +474,7 @@ export default function App() {
                     <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
                       <a href="https://kin-path.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>Kin ↗</a>
                     </h3>
-                    <p style={{ color: '#ffffff', marginBottom: '1rem', fontWeight: '500' }}>Living proof-of-work and verified talent network designed to replace static resumes with empirical code artifacts. Combines interactive force-directed physics graphs, multi-hop campus trust routing, a high-speed Groq AI career copilot, real-time cross-account direct messaging, and Gemini Vision credential verification.</p>
+                    <p style={{ color: '#ffffff', marginBottom: '1rem', fontWeight: '500' }}>Verified talent platform that replaces static resumes with interactive, real-world proof of code and projects. Combines an interactive visual network graph connecting student builders, an ultra-fast Groq AI career copilot, real-time messaging, and Gemini Vision for automated credential verification.</p>
                     <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • TypeScript • FastAPI • Python • Tailwind CSS • Framer Motion • Groq • Gemini • Firebase • PostgreSQL</p>
                   </div>
                   <div style={{ padding: '2rem', background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid #ffffff', borderRadius: '0 1rem 1rem 0' }}>
