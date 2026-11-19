@@ -472,10 +472,10 @@ export default function App() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem' }}>
                   <div style={{ padding: '2rem', background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid #ffffff', borderRadius: '0 1rem 1rem 0' }}>
                     <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
-                      <a href="https://uselumiere.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>Lumiere ↗</a>
+                      <a href="https://kin-path.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>Kin ↗</a>
                     </h3>
-                    <p style={{ color: '#ffffff', marginBottom: '1rem', fontWeight: '500' }}>AI-powered patient identity resolution platform designed to reconcile duplicate and fragmented healthcare records using intelligent matching and confidence-based resolution.</p>
-                    <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • Tailwind CSS • FastAPI • Python • PostgreSQL</p>
+                    <p style={{ color: '#ffffff', marginBottom: '1rem', fontWeight: '500' }}>Living proof-of-work and verified talent network designed to replace static resumes with empirical code artifacts. Combines interactive force-directed physics graphs, multi-hop campus trust routing, a high-speed Groq AI career copilot, real-time cross-account direct messaging, and Gemini Vision credential verification.</p>
+                    <p style={{ color: '#ffffff', fontSize: '0.85rem' }}>Next.js • React • TypeScript • FastAPI • Python • Tailwind CSS • Framer Motion • Groq • Gemini • Firebase • PostgreSQL</p>
                   </div>
                   <div style={{ padding: '2rem', background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(10px)', borderLeft: '4px solid #ffffff', borderRadius: '0 1rem 1rem 0' }}>
                     <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
@@ -492,8 +492,9 @@ export default function App() {
                 <h2 className="section-title">Awards &<br />Recognitions</h2>
                 <ul style={{ listStyleType: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem', color: '#cbd5e1', fontSize: '1.1rem' }}>
                   <li><strong style={{ color: 'white' }}>1st Place</strong> — Plaksha Prayas Tech Hackathon (Future Finance)</li>
+                  <li><strong style={{ color: 'white' }}>1st Place</strong> — AIdeathon | Entrepreneurship Club</li>
                   <li><strong style={{ color: 'white' }}>Winner</strong> — ACM-SIH Ideathon</li>
-                  <li><strong style={{ color: 'white' }}>1st Place</strong> — Byte Battle, Code2Career Club</li>
+                  <li><strong style={{ color: 'white' }}>1st Place</strong> — Byte Battle | Code2Career Club</li>
                   <li><strong style={{ color: 'white' }}>Top 67 Nationwide</strong> — Confluence 2.0 Hackathon</li>
                   <li><strong style={{ color: 'white' }}>Finalist</strong> — StoxraHack 2026</li>
                   <li><strong style={{ color: 'white' }}>Cultural Club Vice President</strong> — NMIMS Chandigarh</li>
@@ -511,7 +512,7 @@ export default function App() {
                   <li><strong style={{ color: 'white' }}>BCG</strong> — GenAI Virtual Experience</li>
                   <li><strong style={{ color: 'white' }}>Vanderbilt University</strong> — Prompt Engineering for ChatGPT</li>
                   <li><strong style={{ color: 'white' }}>AWS</strong> — Generative AI with Large Language Models</li>
-                  <li><strong style={{ color: 'white' }}>Google</strong> — Solution Challenge 2026</li>
+                  <li><strong style={{ color: 'white' }}>Google Cloud</strong> — IAM & Networking for AWS Professionals</li>
                 </ul>
               </div>
 
